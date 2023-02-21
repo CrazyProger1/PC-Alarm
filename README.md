@@ -1,4 +1,7 @@
-![](resources/icons/alarm.png)
+
+<p align="center">
+  <img src="https://github.com/CrazyProger1/PC-Alarm/blob/dev/resources/icons/alarm.png" alt="Alarm logo" width="256" height="256"/>
+</p>
 
 # PC-Alarm
 
