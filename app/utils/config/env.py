@@ -1,12 +1,11 @@
 import functools
-import json
 
 from app.utils.filesystem import read, write
 from dotenv import load_dotenv
 from .config import FileConfig
 
 
-class ENVConfig(dict, FileConfig):
+class ENVConfig(FileConfig):
     def __init__(self, data: dict):
         super(ENVConfig, self).__init__(data)
 

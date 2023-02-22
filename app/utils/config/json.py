@@ -1,11 +1,10 @@
 import functools
-import json
 
 from app.utils.json import *
 from .config import FileConfig
 
 
-class JSONConfig(dict, FileConfig):
+class JSONConfig(FileConfig):
     def __init__(self, data: dict):
         super(JSONConfig, self).__init__(
             {
