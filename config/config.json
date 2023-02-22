@@ -1,0 +1,8 @@
+{
+  "ui_language": "English",
+  "logging": {
+    "file": "main.log",
+    "filemode": "w",
+    "level": 10
+  }
+}
