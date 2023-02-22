@@ -6,7 +6,13 @@ from app.utils.import_utils import import_module
 
 class PyConfig(Config):
     def __init__(self, data: dict):
-        super(PyConfig, self).__init__(data)
+        super(PyConfig, self).__init__(
+            {
+                key: value
+                if not isinstance(value, dict)
+                else PyConfig(value)
+                for key, value in data.items()
+            })
 
     @classmethod
     @functools.cache
