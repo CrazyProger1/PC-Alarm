@@ -1,18 +1,18 @@
+import json
+
 from abc import ABC
 
 
-class Config:
-    def __getitem__(self, item):
-        raise NotImplementedError
-
-    def __setitem__(self, key, value):
-        raise NotImplementedError
+class Config(dict):
 
     def __getattr__(self, item):
-        raise NotImplementedError
+        return self.__getitem__(item)
 
     def __setattr__(self, key, value):
-        raise NotImplementedError
+        self.__setitem__(key, value)
+
+    def __repr__(self):
+        return json.dumps(dict(self), indent=1)
 
 
 class FileConfig(Config, ABC):

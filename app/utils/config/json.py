@@ -1,7 +1,8 @@
 import functools
+import json
 
-from .config import FileConfig
 from app.utils.json import *
+from .config import FileConfig
 
 
 class JSONConfig(dict, FileConfig):
@@ -14,16 +15,12 @@ class JSONConfig(dict, FileConfig):
                 for key, value in data.items()
             })
 
-    def __getattr__(self, item):
-        return self.__getitem__(item)
-
-    def __setattr__(self, key, value):
-        self.__setitem__(key, value)
-
     @classmethod
     @functools.cache
-    def load(cls, path: str) -> "JSONConfig":
-        return cls(read_json(path))
+    def load(cls, path: str = None) -> "JSONConfig":
+        return cls(read_json(path or cls.path))
 
-    def save(self, path: str):
-        write_json(path, dict(self))
+    def save(self, path: str = None):
+        write_json(path or self.path, dict(self))
+
+
