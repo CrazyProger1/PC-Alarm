@@ -1,3 +1,5 @@
+import functools
+
 from .config import Config
 from app.utils.import_utils import import_module
 
@@ -7,6 +9,7 @@ class PyConfig(Config):
         super(PyConfig, self).__init__(data)
 
     @classmethod
+    @functools.cache
     def import_file(cls, path: str):
         mod = import_module(path)
         data = {}
