@@ -15,8 +15,8 @@ def configure_logging():
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        prog=settings.APP_NAME,
-        description=f'{settings.APP_NAME} is an application that will help you detect someone '
+        prog=settings.APP.NAME,
+        description=f'{settings.APP.NAME} is an application that will help you detect someone '
                     'else presence on your computer while you are away.'
     )
     parser.add_argument(
@@ -32,6 +32,7 @@ def parse_args() -> argparse.Namespace:
 def main():
     args = parse_args()
     configure_logging()
+
     logger.info(f'Application started. Arguments: {args.__dict__}')
 
     if args.configurator:

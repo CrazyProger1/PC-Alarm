@@ -31,7 +31,7 @@ class _Formatter(logging.Formatter):
         return formatter.format(record)
 
 
-logger: logging.Logger = logging.getLogger(settings.APP_NAME)
+logger: logging.Logger = logging.getLogger(settings.APP.NAME)
 logger.setLevel(settings.LOGGING.LEVEL)
 
 _stream_handler = logging.StreamHandler()
