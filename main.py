@@ -37,8 +37,15 @@ def main():
 
     if args.configurator:
         logger.debug('Running configurator...')
+        from app.configurator import App
+
+        app = App()
     else:
         logger.debug('Running bot...')
+        from app.bot import App
+        app = App()
+
+    app.run()
 
     logger.info(f'Application terminated')
 
