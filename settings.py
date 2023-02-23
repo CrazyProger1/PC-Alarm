@@ -40,3 +40,14 @@ LANGUAGE = {
 SUPPORT = {
     'TELEGRAM': 'crazyproger1'
 }
+
+COMMAND = {
+    'PREFIX': '/',
+    'REGEXP': fr'^\/\w+'
+}
+
+MIDDLEWARES = [
+    'app.bot.middlewares.ErrorCatchingMiddleware',
+    'app.bot.middlewares.AuthMiddleware',
+    'app.bot.middlewares.PermissionMiddleware',
+]
