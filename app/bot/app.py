@@ -3,6 +3,7 @@ import aiogram
 from aiogram import types
 from app.settings import settings
 from app.utils.import_utils import import_module
+from app.database import Users
 
 
 class App:
@@ -35,19 +36,19 @@ class App:
         return wrapper
 
     @_middlewares
-    async def _handle_callback(self, callback: types.CallbackQuery):
+    async def _handle_callback(self, callback: types.CallbackQuery, user: Users):
         pass
 
     @_middlewares
-    async def _handle_message(self, message: types.Message):
+    async def _handle_message(self, message: types.Message, user: Users):
         pass
 
     @_middlewares
-    async def _handle_command(self, message: types.Message):
+    async def _handle_command(self, message: types.Message, user: Users):
         pass
 
     @_middlewares
-    async def _handle_media(self, message: types.Message):
+    async def _handle_media(self, message: types.Message, user: Users):
         pass
 
     def _register_handlers(self):

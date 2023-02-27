@@ -2,6 +2,7 @@ import aiogram
 
 from aiogram import types
 from app.utils.cls import SingletonMeta
+from app.database.authenticator import Authenticator
 
 
 class Middleware(metaclass=SingletonMeta):
@@ -22,7 +23,12 @@ class ErrorCatchingMiddleware(Middleware):
 
 
 class AuthMiddleware(Middleware):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(AuthMiddleware, self).__init__(*args, **kwargs)
+        self.authenticator = Authenticator()
+
+    async def __call__(self, method, message_or_callback: types.Message | types.CallbackQuery, **kwargs):
+        return await method(message_or_callback, user=None, **kwargs)
 
 
 class PermissionMiddleware(Middleware):

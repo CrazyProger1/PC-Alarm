@@ -28,7 +28,11 @@ BOT = {
 
 DATABASE = {
     'ENGINE': env_conf.DB_ENGINE,
-    'FILE': env_conf.DB_FILE
+    'PARAMS': {
+        'database': env_conf.DB_FILE
+    },
+    'AUTHENTICATOR_CLASS': 'custom.CustomAuthenticator'
+
 }
 
 LANGUAGE = {

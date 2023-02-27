@@ -8,11 +8,12 @@ from app.utils.import_utils import import_module
 def connect():
     logger.info('SQLite connection created')
     try:
-        engine = import_module(settings.DB_ENGINE)
+        engine = import_module(settings.DATABASE.ENGINE)
     except ModuleNotFoundError:
         raise
 
-    config = settings.ENGINE_CONFIG
+    config = settings.DATABASE.PARAMS
+
     return engine(**config)
 
 
