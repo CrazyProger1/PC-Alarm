@@ -3,7 +3,6 @@ import aiogram
 from aiogram import types
 from app.settings import settings
 from app.utils.import_utils import import_module
-from app.database import Users
 from .router import Router
 
 
@@ -38,20 +37,20 @@ class App:
         return wrapper
 
     @_middlewares
-    async def _handle_callback(self, callback: types.CallbackQuery, user: Users):
-        await self._router.route_callback(callback, user=user)
+    async def _handle_callback(self, *args, **kwargs):
+        await self._router.route_callback(*args, **kwargs)
 
     @_middlewares
-    async def _handle_message(self, message: types.Message, user: Users):
-        await self._router.route_message(message, user=user)
+    async def _handle_message(self, *args, **kwargs):
+        await self._router.route_message(*args, **kwargs)
 
     @_middlewares
-    async def _handle_command(self, message: types.Message, user: Users):
-        await self._router.route_command(message, user=user)
+    async def _handle_command(self, *args, **kwargs):
+        await self._router.route_command(*args, **kwargs)
 
     @_middlewares
-    async def _handle_media(self, message: types.Message, user: Users):
-        await self._router.route_media(message, user=user)
+    async def _handle_media(self, *args, **kwargs):
+        await self._router.route_media(*args, **kwargs)
 
     def _register_handlers(self):
         self._dispatcher.register_message_handler(

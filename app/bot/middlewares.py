@@ -2,15 +2,10 @@ import aiogram
 
 from aiogram import types
 from app.utils.cls import SingletonMeta
-from app.database.authenticator import Authenticator
-
-
-class Middleware(metaclass=SingletonMeta):
-    def __init__(self, bot: aiogram.Bot):
-        self.bot = bot
-
-    async def __call__(self, method, message_or_callback: types.Message | types.CallbackQuery, **kwargs):
-        return await method(message_or_callback, **kwargs)
+from app.database import Authenticator
+from app.exceptions import AccessError
+from .router import Router
+from .types import Middleware, Page
 
 
 class ErrorCatchingMiddleware(Middleware):
@@ -33,4 +28,16 @@ class AuthMiddleware(Middleware):
 
 
 class PermissionMiddleware(Middleware):
-    pass
+    async def __call__(self, method, message_or_callback: types.Message | types.CallbackQuery, **kwargs):
+        user = kwargs.get('user')
+        page = await Router.get_page(user)
+
+        for perm_cls in page.permission_classes:
+            if not await perm_cls(bot=self.bot)(
+                    page,
+                    message_or_callback,
+                    **kwargs
+            ):
+                raise AccessError()
+
+        return await method(message_or_callback, **kwargs)
