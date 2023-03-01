@@ -4,6 +4,7 @@ from aiogram import types
 from app.settings import settings
 from app.utils.import_utils import import_module
 from .router import Router
+from .pages import *
 
 
 class App:

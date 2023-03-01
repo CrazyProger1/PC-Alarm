@@ -53,6 +53,10 @@ class Categories(Model):
     def get_admin():
         return Categories.get_by_id('Admin')
 
+    @staticmethod
+    def get_banned():
+        return Categories.get_by_id('Banned')
+
 
 class Users(Model):
     id = peewee.IntegerField(primary_key=True)
@@ -60,4 +64,10 @@ class Users(Model):
     first_name = peewee.CharField(FIRST_NAME)
     last_name = peewee.CharField(LAST_NAME, null=True)
     language = peewee.ForeignKeyField(Languages, on_delete='SET DEFAULT', default=Languages.get_default)
-    category = peewee.ForeignKeyField(Languages, on_delete='SET DEFAULT', default=Categories.get_default)
+    category = peewee.ForeignKeyField(Categories, on_delete='SET DEFAULT', default=Categories.get_default)
+
+    def is_admin(self):
+        pass
+
+    def is_banned(self):
+        return self.category == Categories.get_banned()

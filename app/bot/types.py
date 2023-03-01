@@ -4,6 +4,7 @@ import aiogram
 from typing import Generator, Optional
 from aiogram import types
 from app.utils.cls import SingletonMeta
+from app.database import Users
 
 
 class Middleware(metaclass=SingletonMeta):
@@ -27,8 +28,11 @@ class Page(metaclass=SingletonMeta):
     default: bool = False
     path: str = ''
 
+    def __init__(self, bot: aiogram.Bot = None):
+        self.bot = bot
+
     @classmethod
-    def iter_subpages(cls) -> Generator["Page", None, None]:
+    def iter_subpages(cls) -> Generator[type["Page"], None, None]:
         for subpage in cls.__subclasses__():
             yield subpage
             for subsubpage in subpage.iter_subpages():
@@ -36,14 +40,32 @@ class Page(metaclass=SingletonMeta):
 
     @classmethod
     @functools.cache
-    def get_default(cls) -> Optional["Page"]:
+    def get_default(cls) -> Optional[type["Page"]]:
         for page in cls.iter_subpages():
             if page.default:
                 return page
 
     @classmethod
     @functools.cache
-    def get(cls, path: str) -> Optional["Page"]:
+    def get(cls, path: str) -> Optional[type["Page"]]:
         for page in cls.iter_subpages():
             if page.path == path:
                 return page
+
+    async def on_initialize(self, user: Users):
+        pass
+
+    async def on_destroy(self, user: Users):
+        pass
+
+    async def on_message(self, message: types.Message, user: Users, **kwargs):
+        pass
+
+    async def on_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
+        pass
+
+    async def on_media(self, message: types.Message, user: Users, **kwargs):
+        pass
+
+    async def on_command(self, message: types.Message, user: Users, **kwargs):
+        pass
