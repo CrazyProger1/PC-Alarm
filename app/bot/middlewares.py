@@ -28,7 +28,8 @@ class AuthMiddleware(Middleware):
         self.authenticator = Authenticator()
 
     async def __call__(self, method, message_or_callback: types.Message | types.CallbackQuery, **kwargs):
-        return await method(message_or_callback, user=None, **kwargs)
+        user = self.authenticator.authenticate(message_or_callback.from_user)
+        return await method(message_or_callback, user=user, **kwargs)
 
 
 class PermissionMiddleware(Middleware):

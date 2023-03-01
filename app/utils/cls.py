@@ -18,6 +18,8 @@ class Customizable:
             subclass = import_module(cls.cls_path)
             if issubclass(subclass, Customizable):
                 return subclass(*args, **kwargs)
+            else:
+                raise # 
 
         new_instance = super(Customizable, cls).__new__(cls, *args, **kwargs)
         return new_instance

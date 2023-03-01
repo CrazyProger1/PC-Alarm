@@ -1,10 +1,14 @@
 from app.utils.config import JSONConfig, ENVConfig
 
-JSON_CONFIG_FILE = 'config/config.json'
-ENV_CONFIG_FILE = 'env/local.env'
+FILESYSTEM = {
+    'JSON_CONFIG_FILE': 'config/config.json',
+    'ENV_CONFIG_FILE': 'env/local.env',
+    'LANGUAGES_FOLDER': 'resources/languages',
+    'CATEGORIES_FOLDER': 'resources/categories'
+}
 
-json_conf = JSONConfig.load(JSON_CONFIG_FILE)
-env_conf = ENVConfig.load(ENV_CONFIG_FILE)
+json_conf = JSONConfig.load(FILESYSTEM['JSON_CONFIG_FILE'])
+env_conf = ENVConfig.load(FILESYSTEM['ENV_CONFIG_FILE'])
 
 DEBUG = True
 
@@ -32,7 +36,6 @@ DATABASE = {
         'database': env_conf.DB_FILE
     },
     'AUTHENTICATOR_CLASS': 'custom.CustomAuthenticator'
-
 }
 
 LANGUAGE = {

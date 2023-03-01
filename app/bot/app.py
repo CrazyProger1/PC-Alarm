@@ -4,6 +4,7 @@ from aiogram import types
 from app.settings import settings
 from app.utils.import_utils import import_module
 from app.database import Users
+from .router import Router
 
 
 class App:
@@ -14,6 +15,7 @@ class App:
             import_module(middleware_path)(bot=self._bot)
             for middleware_path in settings.MIDDLEWARES
         )
+        self._router = Router(bot=self._bot)
 
     @staticmethod
     def _middlewares(method):
@@ -37,19 +39,19 @@ class App:
 
     @_middlewares
     async def _handle_callback(self, callback: types.CallbackQuery, user: Users):
-        pass
+        await self._router.route_callback(callback, user=user)
 
     @_middlewares
     async def _handle_message(self, message: types.Message, user: Users):
-        pass
+        await self._router.route_message(message, user=user)
 
     @_middlewares
     async def _handle_command(self, message: types.Message, user: Users):
-        pass
+        await self._router.route_command(message, user=user)
 
     @_middlewares
     async def _handle_media(self, message: types.Message, user: Users):
-        pass
+        await self._router.route_media(message, user=user)
 
     def _register_handlers(self):
         self._dispatcher.register_message_handler(
