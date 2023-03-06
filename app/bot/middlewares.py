@@ -31,13 +31,13 @@ class PermissionMiddleware(Middleware):
     async def __call__(self, method, message_or_callback: types.Message | types.CallbackQuery, **kwargs):
         user = kwargs.get('user')
         page = await Router.get_page(user)
-
         for perm_cls in page.permission_classes:
             if not await perm_cls(bot=self.bot)(
                     page,
                     message_or_callback,
                     **kwargs
             ):
+                print('Access Error')
                 raise AccessError()
 
         return await method(message_or_callback, **kwargs)

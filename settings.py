@@ -50,7 +50,8 @@ SUPPORT = {
 
 COMMAND = {
     'PREFIX': '/',
-    'REGEXP': fr'^\/\w+'
+    'REGEXP': fr'^\/\w+',
+    'PARSER_CLASS': 'app.bot.types.Parser'
 }
 
 MIDDLEWARES = [

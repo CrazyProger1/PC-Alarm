@@ -1,13 +1,17 @@
 import functools
 import aiogram
 
-from typing import Generator, Optional
+from typing import Generator, Optional, Callable
 from aiogram import types
-from app.utils.cls import SingletonMeta
+from dataclasses import dataclass
+
+from app.utils import cls, string
 from app.database import Users
+from app.settings import settings
+from .enums import ContentType
 
 
-class Middleware(metaclass=SingletonMeta):
+class Middleware(metaclass=cls.SingletonMeta):
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
 
@@ -15,21 +19,60 @@ class Middleware(metaclass=SingletonMeta):
         return await method(message_or_callback, **kwargs)
 
 
-class Permission(metaclass=SingletonMeta):
+class Permission(metaclass=cls.SingletonMeta):
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
 
-    async def __call__(self, page: "Page", message_or_callback: types.Message | types.CallbackQuery, **kwargs) -> bool:
+    async def __call__(self,
+                       page: "Page",
+                       message_or_callback: types.Message | types.CallbackQuery,
+                       content_type: ContentType,
+                       **kwargs) -> bool:
         return True
 
 
-class Page(metaclass=SingletonMeta):
+@dataclass
+class Command:
+    command: str
+    params: list
+
+
+class Parser(cls.Customizable, metaclass=cls.SingletonMeta):
+    cls_path = settings.COMMAND.PARSER_CLASS
+
+    def parse(self, message: types.Message) -> Command:
+        pass
+
+
+class Executor(metaclass=cls.SingletonMeta):
+    commands: tuple[str] = ()
+
+    def __init__(self,
+                 bot: aiogram.Bot = None):
+        self.bot = bot
+
+    def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
+        pass
+
+    @classmethod
+    @functools.cache
+    def get(cls, command: Command) -> "Executor":
+        for subcls in cls.__subclasses__():
+            if command.command in subcls.commands:
+                return subcls()
+
+
+class Page(metaclass=cls.SingletonMeta):
     permission_classes: tuple[type[Permission]] = ()
     default: bool = False
     path: str = ''
 
-    def __init__(self, bot: aiogram.Bot = None):
+    def __init__(self,
+                 bot: aiogram.Bot = None,
+                 set_page_callback: Callable[[Users, any], None] = None):
         self.bot = bot
+        self._set_page_callback = set_page_callback
+        self._command_parser = Parser()
 
     @classmethod
     def iter_subpages(cls) -> Generator[type["Page"], None, None]:
@@ -52,20 +95,54 @@ class Page(metaclass=SingletonMeta):
             if page.path == path:
                 return page
 
-    async def on_initialize(self, user: Users):
+    async def back(self, user: Users):
+        try:
+            prev_page, _ = self.path.rsplit('.', 1)
+            self._set_page_callback(user, prev_page)
+        except ValueError:
+            pass
+
+    async def next(self, user: Users, page: any):
+        if isinstance(page, str):
+            try:
+                self._set_page_callback(
+                    user,
+                    string.join_by(self.path, page)
+                )
+            except ValueError:
+                self._set_page_callback(
+                    user,
+                    string.join_by(page)
+                )
+            return
+        self._set_page_callback(
+            user,
+            page
+        )
+
+    async def initialize(self, user: Users):
         pass
 
-    async def on_destroy(self, user: Users):
+    async def destroy(self, user: Users):
         pass
 
-    async def on_message(self, message: types.Message, user: Users, **kwargs):
+    async def handle_message(self, message: types.Message, user: Users, **kwargs):
         pass
 
-    async def on_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
+    async def handle_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
         pass
 
-    async def on_media(self, message: types.Message, user: Users, **kwargs):
+    async def handle_media(self, message: types.Message, user: Users, **kwargs):
         pass
 
-    async def on_command(self, message: types.Message, user: Users, **kwargs):
-        pass
+    async def handle_command(self, message: types.Message, user: Users, **kwargs):
+        command = self._command_parser.parse(
+            message=message
+        )
+        executor = Executor.get(command)
+
+        if executor:
+            executor.execute(command, message, user, **kwargs)
+
+    def __repr__(self):
+        return self.path

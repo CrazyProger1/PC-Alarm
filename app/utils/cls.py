@@ -14,12 +14,12 @@ class Customizable:
     cls_path: str = None
 
     def __new__(cls, *args, **kwargs):
-        if cls in Customizable.__subclasses__() and cls.cls_path:
+        if cls in Customizable.__subclasses__() and cls.cls_path and cls.__name__ != cls.cls_path.rsplit('.', 1)[-1]:
             subclass = import_module(cls.cls_path)
             if issubclass(subclass, Customizable):
                 return subclass(*args, **kwargs)
             else:
-                raise # 
+                raise  #
 
         new_instance = super(Customizable, cls).__new__(cls, *args, **kwargs)
         return new_instance

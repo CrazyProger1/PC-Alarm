@@ -5,6 +5,7 @@ from app.settings import settings
 from app.utils.import_utils import import_module
 from .router import Router
 from .pages import *
+from .enums import ContentType
 
 
 class App:
@@ -18,38 +19,45 @@ class App:
         self._router = Router(bot=self._bot)
 
     @staticmethod
-    def _middlewares(method):
-        async def wrapper(self, message_or_callback: types.Message | types.CallbackQuery):
-            counter = 0
-            middleware = self._middlewares[counter]
+    def _middlewares(content_type: ContentType):
+        def decorator(method):
+            async def wrapper(self, message_or_callback: types.Message | types.CallbackQuery):
 
-            async def next_step(*args, **kwargs):
-                nonlocal counter, middleware
-                counter += 1
+                counter = 0
+                middleware = self._middlewares[counter]
 
-                if counter < len(self._middlewares):
-                    middleware = self._middlewares[counter]
-                    await middleware(next_step, *args, **kwargs)
-                else:
-                    await method(self, *args, **kwargs)
+                async def next_step(*args, **kwargs):
+                    nonlocal counter, middleware
+                    counter += 1
 
-            await middleware(next_step, message_or_callback)
+                    if counter < len(self._middlewares):
+                        middleware = self._middlewares[counter]
+                        await middleware(next_step, *args, **kwargs)
+                    else:
+                        await method(self, *args, **kwargs)
 
-        return wrapper
+                await middleware(
+                    next_step,
+                    message_or_callback,
+                    content_type=content_type)
 
-    @_middlewares
+            return wrapper
+
+        return decorator
+
+    @_middlewares(content_type=ContentType.CALLBACK)
     async def _handle_callback(self, *args, **kwargs):
         await self._router.route_callback(*args, **kwargs)
 
-    @_middlewares
+    @_middlewares(content_type=ContentType.MESSAGE)
     async def _handle_message(self, *args, **kwargs):
         await self._router.route_message(*args, **kwargs)
 
-    @_middlewares
+    @_middlewares(content_type=ContentType.COMMAND)
     async def _handle_command(self, *args, **kwargs):
         await self._router.route_command(*args, **kwargs)
 
-    @_middlewares
+    @_middlewares(content_type=ContentType.MEDIA)
     async def _handle_media(self, *args, **kwargs):
         await self._router.route_media(*args, **kwargs)
 

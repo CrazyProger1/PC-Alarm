@@ -1,16 +1,21 @@
 import aiogram
 
 from app.database import Users
-from app.utils.cls import SingletonMeta
+from app.utils import logging, cls
 from .types import Page
 
 
-class Router(metaclass=SingletonMeta):
+class Router(metaclass=cls.SingletonMeta):
     def __init__(self, bot: aiogram.Bot):
         self._bot = bot
+        self._init_pages()
 
+    def _init_pages(self):
         for page in Page.iter_subpages():
-            page(bot=self._bot)
+            page(
+                bot=self._bot,
+                set_page_callback=self.set_page
+            )
 
     @staticmethod
     async def get_page(user: Users) -> Page:
@@ -38,22 +43,23 @@ class Router(metaclass=SingletonMeta):
 
         if old_page != new_page:
             if old_page:
-                await old_page.on_destroy(user)
+                await old_page.destroy(user)
             user.state.page = new_page
-            await new_page.on_initialize(user)
+            await new_page.initialize(user)
+            logging.logger.debug(f'User {user} changed page to {new_page}')
 
     async def route_callback(self, *args, **kwargs):
         page = await self.get_page(kwargs.get('user'))
-        await page.on_callback(*args, **kwargs)
+        await page.handle_callback(*args, **kwargs)
 
     async def route_message(self, *args, **kwargs):
         page = await self.get_page(kwargs.get('user'))
-        await page.on_message(*args, **kwargs)
+        await page.handle_message(*args, **kwargs)
 
     async def route_command(self, *args, **kwargs):
         page = await self.get_page(kwargs.get('user'))
-        await page.on_command(*args, **kwargs)
+        await page.handle_command(*args, **kwargs)
 
     async def route_media(self, *args, **kwargs):
         page = await self.get_page(kwargs.get('user'))
-        await page.on_media(*args, **kwargs)
+        await page.handle_media(*args, **kwargs)
