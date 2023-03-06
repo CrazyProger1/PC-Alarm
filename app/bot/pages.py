@@ -1,4 +1,5 @@
 from app.database import Users
+from app.bot import events
 from .types import Page
 from .permissions import IsNotBanned
 
@@ -9,4 +10,8 @@ class MainPage(Page):
     permission_classes = (
         IsNotBanned,
     )
+
+    def __init__(self, *args, **kwargs):
+        super(MainPage, self).__init__(*args, **kwargs)
+
 

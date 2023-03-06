@@ -5,9 +5,10 @@ from typing import Generator, Optional, Callable
 from aiogram import types
 from dataclasses import dataclass
 
-from app.utils import cls, string
+from app.utils import cls, string, event
 from app.database import Users
 from app.settings import settings
+from app.bot import events
 from .enums import ContentType
 
 
@@ -51,7 +52,7 @@ class Executor(metaclass=cls.SingletonMeta):
                  bot: aiogram.Bot = None):
         self.bot = bot
 
-    def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
+    async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         pass
 
     @classmethod
@@ -62,7 +63,7 @@ class Executor(metaclass=cls.SingletonMeta):
                 return subcls()
 
 
-class Page(metaclass=cls.SingletonMeta):
+class Page(event.EventEmitter, metaclass=cls.SingletonMeta):
     permission_classes: tuple[type[Permission]] = ()
     default: bool = False
     path: str = ''
@@ -73,6 +74,7 @@ class Page(metaclass=cls.SingletonMeta):
         self.bot = bot
         self._set_page_callback = set_page_callback
         self._command_parser = Parser()
+        super(Page, self).__init__()
 
     @classmethod
     def iter_subpages(cls) -> Generator[type["Page"], None, None]:
@@ -120,29 +122,33 @@ class Page(metaclass=cls.SingletonMeta):
             page
         )
 
-    async def initialize(self, user: Users):
-        pass
-
-    async def destroy(self, user: Users):
-        pass
-
-    async def handle_message(self, message: types.Message, user: Users, **kwargs):
-        pass
-
-    async def handle_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
-        pass
-
-    async def handle_media(self, message: types.Message, user: Users, **kwargs):
-        pass
-
-    async def handle_command(self, message: types.Message, user: Users, **kwargs):
+    async def _execute_command(self, message: types.Message, user: Users, **kwargs):
         command = self._command_parser.parse(
             message=message
         )
         executor = Executor.get(command)
 
         if executor:
-            executor.execute(command, message, user, **kwargs)
+            await executor.execute(command, message, user, **kwargs)
+
+    async def initialize(self, user: Users):
+        await self._call(events.INIT, user=user)
+
+    async def destroy(self, user: Users):
+        await self._call(events.DESTROY, user=user)
+
+    async def handle_message(self, message: types.Message, user: Users, **kwargs):
+        await self._call(events.MESSAGE, message=message, user=user, **kwargs)
+
+    async def handle_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
+        await self._call(events.CALLBACK, callback=callback, user=user, **kwargs)
+
+    async def handle_media(self, message: types.Message, user: Users, **kwargs):
+        await self._call(events.MEDIA, message=message, user=user, **kwargs)
+
+    async def handle_command(self, message: types.Message, user: Users, **kwargs):
+        await self._call(events.COMMAND, message=message, user=user, **kwargs)
+        await self._execute_command(message, user, **kwargs)
 
     def __repr__(self):
         return self.path
