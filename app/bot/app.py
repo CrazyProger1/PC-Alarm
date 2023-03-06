@@ -5,6 +5,7 @@ from app.settings import settings
 from app.utils.import_utils import import_module
 from .router import Router
 from .pages import *
+from .executors import *
 from .enums import ContentType
 
 

@@ -1,5 +1,6 @@
 import functools
 import aiogram
+import shlex
 
 from typing import Generator, Optional, Callable
 from aiogram import types
@@ -8,8 +9,7 @@ from dataclasses import dataclass
 from app.utils import cls, string, event
 from app.database import Users
 from app.settings import settings
-from app.bot import events
-from .enums import ContentType
+from app.bot import events, enums
 
 
 class Middleware(metaclass=cls.SingletonMeta):
@@ -27,7 +27,7 @@ class Permission(metaclass=cls.SingletonMeta):
     async def __call__(self,
                        page: "Page",
                        message_or_callback: types.Message | types.CallbackQuery,
-                       content_type: ContentType,
+                       content_type: enums.ContentType,
                        **kwargs) -> bool:
         return True
 
@@ -42,7 +42,8 @@ class Parser(cls.Customizable, metaclass=cls.SingletonMeta):
     cls_path = settings.COMMAND.PARSER_CLASS
 
     def parse(self, message: types.Message) -> Command:
-        pass
+        command, *params = shlex.split(message.text.removeprefix(settings.COMMAND.PREFIX))
+        return Command(command, params)
 
 
 class Executor(metaclass=cls.SingletonMeta):
@@ -57,10 +58,14 @@ class Executor(metaclass=cls.SingletonMeta):
 
     @classmethod
     @functools.cache
-    def get(cls, command: Command) -> "Executor":
+    def _cache_get(cls, command: str):
         for subcls in cls.__subclasses__():
-            if command.command in subcls.commands:
+            if command in subcls.commands:
                 return subcls()
+
+    @classmethod
+    def get(cls, command: Command) -> "Executor":
+        return cls._cache_get(command.command)
 
 
 class Page(event.EventEmitter, metaclass=cls.SingletonMeta):
@@ -74,7 +79,12 @@ class Page(event.EventEmitter, metaclass=cls.SingletonMeta):
         self.bot = bot
         self._set_page_callback = set_page_callback
         self._command_parser = Parser()
+        self._init_executors()
         super(Page, self).__init__()
+
+    def _init_executors(self):
+        for executor_cls in Executor.__subclasses__():
+            executor_cls(bot=self.bot)
 
     @classmethod
     def iter_subpages(cls) -> Generator[type["Page"], None, None]:
