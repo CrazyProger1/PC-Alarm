@@ -1,9 +1,11 @@
+import functools
 import gettext
 
 from app.settings import settings
 from app.database import Users, Languages
 from .filesystem import iter_files
 from .cls import SingletonMeta
+from .logging import logger
 
 
 class Translator(metaclass=SingletonMeta):
@@ -14,18 +16,29 @@ class Translator(metaclass=SingletonMeta):
 
     def _load(self):
         for language in Languages.select():
-            self._loaded_packs.update({language.short_name: gettext.translation(
-                domain=self._domain,
-                localedir=settings.LANGUAGE.LOCALE_FOLDER,
-                languages=[language.short_name]
-            )})
+            try:
+                self._loaded_packs.update({
+                    language.short_name: gettext.translation(
+                        domain=self._domain,
+                        localedir=settings.LANGUAGE.LOCALE_FOLDER,
+                        languages=[language.short_name]
+                    )})
+                logger.debug(f'Loaded language: {language.short_name}')
+            except FileNotFoundError:
+                if settings.DEBUG:
+                    logger.fatal(
+                        f'No translations for {self._domain} domain in the {language.short_name} language!'
+                        f' Note: add a translation for this domain or the program will not work')
+                    return
+                raise
 
+    @functools.cache
     def translate(
             self,
             key: str,
             user: Users = None,
             language: Languages = None
-    ):
+    ) -> str:
         if not language and user:
             language = user.language
 
@@ -33,7 +46,11 @@ class Translator(metaclass=SingletonMeta):
             language = Languages.get_default()
 
         lang_name = language.short_name
-        return self._loaded_packs[lang_name].gettext(key)
+
+        try:
+            return self._loaded_packs[lang_name].gettext(key)
+        except KeyError:
+            return key
 
 
 def _(*args, **kwargs):
