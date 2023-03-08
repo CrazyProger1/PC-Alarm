@@ -21,5 +21,3 @@ class JSONConfig(FileConfig):
 
     def save(self, path: str = None):
         write_json(path or self.path, dict(self))
-
-

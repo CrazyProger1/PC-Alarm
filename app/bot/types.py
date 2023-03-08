@@ -6,13 +6,13 @@ from typing import Generator, Optional, Callable
 from aiogram import types
 from dataclasses import dataclass
 
-from app.utils import cls, string, event
+from app.utils import cls as cls_tools, string, event
 from app.database import Users
 from app.settings import settings
 from app.bot import events, enums
 
 
-class Middleware(metaclass=cls.SingletonMeta):
+class Middleware(metaclass=cls_tools.SingletonMeta):
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
 
@@ -20,7 +20,7 @@ class Middleware(metaclass=cls.SingletonMeta):
         return await method(message_or_callback, **kwargs)
 
 
-class Permission(metaclass=cls.SingletonMeta):
+class Permission(metaclass=cls_tools.SingletonMeta):
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
 
@@ -38,7 +38,7 @@ class Command:
     params: list
 
 
-class Parser(cls.Customizable, metaclass=cls.SingletonMeta):
+class Parser(cls_tools.Customizable, metaclass=cls_tools.SingletonMeta):
     cls_path = settings.COMMAND.PARSER_CLASS
 
     def parse(self, message: types.Message) -> Command:
@@ -46,7 +46,7 @@ class Parser(cls.Customizable, metaclass=cls.SingletonMeta):
         return Command(command, params)
 
 
-class Executor(metaclass=cls.SingletonMeta):
+class Executor(metaclass=cls_tools.SingletonMeta):
     commands: tuple[str] = ()
 
     def __init__(self,
@@ -58,18 +58,32 @@ class Executor(metaclass=cls.SingletonMeta):
 
     @classmethod
     @functools.cache
-    def _cache_get(cls, command: str):
+    def _cached_get(cls, command: str):
         for subcls in cls.__subclasses__():
             if command in subcls.commands:
                 return subcls()
 
     @classmethod
     def get(cls, command: Command) -> "Executor":
-        return cls._cache_get(command.command)
+        return cls._cached_get(command.command)
 
 
-class Page(event.EventEmitter, metaclass=cls.SingletonMeta):
+class Keyboard(metaclass=cls_tools.SingletonMeta):
+    buttons: dict[str, str] = {}
+
+    def __init__(self, bot: aiogram.Bot):
+        self.bot = bot
+
+    async def show(self, user: Users):
+        pass
+
+    async def hide(self, user: Users):
+        pass
+
+
+class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
     permission_classes: tuple[type[Permission]] = ()
+    keyboard_classes: tuple[type[Keyboard]] = ()
     default: bool = False
     path: str = ''
 
@@ -77,8 +91,11 @@ class Page(event.EventEmitter, metaclass=cls.SingletonMeta):
                  bot: aiogram.Bot = None,
                  set_page_callback: Callable[[Users, any], None] = None):
         self.bot = bot
+
         self._set_page_callback = set_page_callback
         self._command_parser = Parser()
+        self._keyboards = tuple(keyboard_cls(self.bot) for keyboard_cls in self.keyboard_classes)
+
         self._init_executors()
         super(Page, self).__init__()
 
@@ -87,23 +104,16 @@ class Page(event.EventEmitter, metaclass=cls.SingletonMeta):
             executor_cls(bot=self.bot)
 
     @classmethod
-    def iter_subpages(cls) -> Generator[type["Page"], None, None]:
-        for subpage in cls.__subclasses__():
-            yield subpage
-            for subsubpage in subpage.iter_subpages():
-                yield subsubpage
-
-    @classmethod
     @functools.cache
     def get_default(cls) -> Optional[type["Page"]]:
-        for page in cls.iter_subpages():
+        for page in cls_tools.iter_subclasses(cls):
             if page.default:
                 return page
 
     @classmethod
     @functools.cache
     def get(cls, path: str) -> Optional[type["Page"]]:
-        for page in cls.iter_subpages():
+        for page in cls_tools.iter_subclasses(cls):
             if page.path == path:
                 return page
 

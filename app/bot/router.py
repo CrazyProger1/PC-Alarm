@@ -11,7 +11,7 @@ class Router(metaclass=cls.SingletonMeta):
         self._init_pages()
 
     def _init_pages(self):
-        for page in Page.iter_subpages():
+        for page in cls.iter_subclasses(Page):
             page(
                 bot=self._bot,
                 set_page_callback=self.set_page
