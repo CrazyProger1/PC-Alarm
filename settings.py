@@ -1,14 +1,13 @@
 from app.utils.config import JSONConfig, ENVConfig
 
-FILESYSTEM = {
+FILES = {
     'JSON_CONFIG_FILE': 'config/config.json',
     'ENV_CONFIG_FILE': 'env/local.env',
-    'LANGUAGES_FOLDER': 'resources/languages',
-    'CATEGORIES_FOLDER': 'resources/categories'
+
 }
 
-json_conf = JSONConfig.load(FILESYSTEM['JSON_CONFIG_FILE'])
-env_conf = ENVConfig.load(FILESYSTEM['ENV_CONFIG_FILE'])
+json_conf = JSONConfig.load(FILES['JSON_CONFIG_FILE'])
+env_conf = ENVConfig.load(FILES['ENV_CONFIG_FILE'])
 
 DEBUG = True
 
@@ -40,8 +39,9 @@ DATABASE = {
 
 LANGUAGE = {
     'UI_LANGUAGE': json_conf.ui_language,
-    'FILE_EXTENSIONS': ('.json', '.lang'),
-    'PACKS_FOLDER': 'resources/languages'
+    'LOCALE_FOLDER': 'resources/languages',
+    'BOT_DOMAIN': 'bot',
+    'CONFIGURATOR_DOMAIN': 'configurator'
 }
 
 SUPPORT = {
@@ -59,3 +59,7 @@ MIDDLEWARES = [
     'app.bot.middlewares.AuthMiddleware',
     'app.bot.middlewares.PermissionMiddleware',
 ]
+
+CATEGORIES = {
+    'FOLDER': 'resources/categories'
+}

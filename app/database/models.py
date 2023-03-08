@@ -1,4 +1,5 @@
 import peewee
+import functools
 
 from .connection import connection
 from .state import UserState
@@ -32,13 +33,13 @@ class Model(peewee.Model):
 
 
 class Languages(Model):
-    short_name = peewee.CharField(max_length=SHORT_LANG_NAME)
-    full_name = peewee.CharField(max_length=FULL_LANG_NAME, primary_key=True)
-    pack_file = peewee.CharField(max_length=LANG_PACK_FILE)
+    short_name = peewee.CharField(max_length=SHORT_LANG_NAME, primary_key=True)
+    full_name = peewee.CharField(max_length=FULL_LANG_NAME)
 
     @staticmethod
+    @functools.cache
     def get_default():
-        return Languages.get_by_id('English')
+        return Languages.get_by_id('en')
 
 
 class Categories(Model):
@@ -46,14 +47,17 @@ class Categories(Model):
     access_level = peewee.IntegerField()
 
     @staticmethod
+    @functools.cache
     def get_default():
         return Categories.get_by_id('Anonymous')
 
     @staticmethod
+    @functools.cache
     def get_admin():
         return Categories.get_by_id('Admin')
 
     @staticmethod
+    @functools.cache
     def get_banned():
         return Categories.get_by_id('Banned')
 
@@ -67,7 +71,7 @@ class Users(Model):
     category = peewee.ForeignKeyField(Categories, on_delete='SET DEFAULT', default=Categories.get_default)
 
     def is_admin(self):
-        pass
+        return self.category == Categories.get_admin()
 
     def is_banned(self):
         return self.category == Categories.get_banned()

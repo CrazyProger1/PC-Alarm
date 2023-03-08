@@ -1,5 +1,5 @@
 {
-  "ui_language": "English",
+  "ui_language": "en",
   "logging": {
     "file": "main.log",
     "filemode": "w",

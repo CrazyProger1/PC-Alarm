@@ -2,7 +2,7 @@ import aiogram
 
 from aiogram import types
 from app.settings import settings
-from app.utils.import_utils import import_module
+from app.utils import import_utils, translator
 from .router import Router
 from .pages import *
 from .executors import *
@@ -11,10 +11,11 @@ from .enums import ContentType
 
 class App:
     def __init__(self):
+        self._translator = translator.Translator(settings.LANGUAGE.BOT_DOMAIN)
         self._bot = aiogram.Bot(token=settings.BOT.TOKEN)
         self._dispatcher = aiogram.Dispatcher(bot=self._bot)
         self._middlewares = list(
-            import_module(middleware_path)(bot=self._bot)
+            import_utils.import_module(middleware_path)(bot=self._bot)
             for middleware_path in settings.MIDDLEWARES
         )
         self._router = Router(bot=self._bot)
