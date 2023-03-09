@@ -1,5 +1,7 @@
+import gettext
+
 from app.settings import settings
-from app.utils import json, filesystem, logging
+from app.utils import json, filesystem, logging, config
 from .connection import connection
 from .models import Users, Languages, Categories, Model
 from .authenticator import Authenticator
@@ -14,22 +16,23 @@ __all__ = [
 
 
 def _load_default_languages():
-    for pack_file in filesystem.iter_files(settings.FILESYSTEM.LANGUAGES_FOLDER):
-        data = json.read_json(pack_file)
+    for lang_folder in filesystem.iter_files(settings.L18N.LOCALE_FOLDER):
+        if not lang_folder.is_dir():
+            continue
+        data = config.JSONConfig.load(lang_folder / '.lang')
         Languages.get_or_create(
-            full_name=data['full_name'],
-            short_name=data['short_name'],
-            pack_file=pack_file
+            full_name=data.full_name,
+            short_name=data.short_name,
         )
     logging.logger.info('Loaded default languages')
 
 
 def _load_default_categories():
-    for category_file in filesystem.iter_files(settings.FILESYSTEM.CATEGORIES_FOLDER):
-        data = json.read_json(category_file)
+    for category_file in filesystem.iter_files(settings.CATEGORIES.FOLDER):
+        data = config.JSONConfig.load(category_file)
         Categories.get_or_create(
-            name=data['name'],
-            access_level=data['access_level']
+            name=data.name,
+            access_level=data.access_level
         )
     logging.logger.info('Loaded default categories')
 

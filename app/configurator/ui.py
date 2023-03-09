@@ -139,14 +139,14 @@ QListWidget{
 
     def _on_language_changed(self):
         logger.debug(f'Language changed: {self.language_selecting.currentText()}')
-        settings.LANGUAGE = self._get_selected_language()
+        settings.L18N = self._get_selected_language()
         self._retranslate_ui()
 
     def _on_save(self):
         logger.debug(f'Configuration saved')
 
     def _retranslate_ui(self):
-        language_name = settings.LANGUAGE
+        language_name = settings.L18N
 
         # translator = Translator(key_prefix='configurator')
         # language = Languages.get_by_id(language_name)
