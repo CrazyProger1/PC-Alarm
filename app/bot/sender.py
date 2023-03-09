@@ -17,3 +17,10 @@ class Sender(metaclass=cls.SingletonMeta):
             **kwargs,
             parse_mode=settings.MESSAGES.PARSE_MODE
         )
+
+    async def send_message_to_all(self, text: str, **kwargs) -> list[types.Message]:
+        result = []
+        for user in Users.select():
+            result.append(await self.send_message(user, text, **kwargs))
+
+        return result

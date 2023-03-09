@@ -57,6 +57,7 @@ class Executor(metaclass=cls_tools.SingletonMeta):
     def __init__(self,
                  bot: aiogram.Bot = None):
         self.bot = bot
+        self.sender = Sender()
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         pass
@@ -195,8 +196,8 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
 
         self._set_page_callback = set_page_callback
         self._command_parser = Parser()
-        self._keyboards = tuple(keyboard_cls(self.bot) for keyboard_cls in self.keyboard_classes)
-        self._sender = Sender()
+        self.keyboards = tuple(keyboard_cls(self.bot) for keyboard_cls in self.keyboard_classes)
+        self.sender = Sender()
 
         self._init_executors()
         self._bind_callbacks()
@@ -207,24 +208,24 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
             executor_cls(bot=self.bot)
 
     def _bind_callbacks(self):
-        for keyboard in self._keyboards:
+        for keyboard in self.keyboards:
             keyboard.add_callback(events.BUTTON_CLICKED, self.handle_button_click)
 
     @functools.cached_property
     def reply_keyboards(self):
-        return tuple(filter(lambda kb: isinstance(kb, ReplyKeyboard), self._keyboards))
+        return tuple(filter(lambda kb: isinstance(kb, ReplyKeyboard), self.keyboards))
 
     @functools.cached_property
     def inline_keyboards(self):
-        return tuple(filter(lambda kb: isinstance(kb, InlineKeyboard), self._keyboards))
+        return tuple(filter(lambda kb: isinstance(kb, InlineKeyboard), self.keyboards))
 
     async def show_keyboard(self, user: Users, keyboard: type[Keyboard]):
         if keyboard in self.keyboard_classes:
-            await self._keyboards[self.keyboard_classes.index(keyboard)].show(user)
+            await self.keyboards[self.keyboard_classes.index(keyboard)].show(user)
 
     async def hide_keyboard(self, user: Users, keyboard: type[Keyboard]):
         if keyboard in self.keyboard_classes:
-            await self._keyboards[self.keyboard_classes.index(keyboard)].hide(user)
+            await self.keyboards[self.keyboard_classes.index(keyboard)].hide(user)
 
     @classmethod
     @functools.cache

@@ -8,7 +8,7 @@ PC-Alarm is an application that will help you detect someone else presence on yo
 
 ## TO-DO
 
-- [ ] Alarm (Main Goal)
+- [x] Alarm (Main Goal)
 - [ ] L18N
     - [ ] English
     - [ ] Ukrainian
