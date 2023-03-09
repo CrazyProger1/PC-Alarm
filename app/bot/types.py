@@ -3,7 +3,7 @@ import shlex
 import aiogram
 
 from dataclasses import dataclass
-from typing import Optional, Callable
+from typing import Optional, Callable, Coroutine
 from aiogram import types
 
 from app.bot import events, enums
@@ -74,7 +74,7 @@ class Executor(metaclass=cls_tools.SingletonMeta):
 
 
 class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
-    buttons: list[str] = []
+    buttons: tuple[str] = []
     caption_key: str
 
     def __init__(self, bot: aiogram.Bot):
@@ -111,14 +111,12 @@ class ReplyKeyboard(Keyboard):
     def _get_buttons(self, language: Languages) -> list[list[types.KeyboardButton]]:
         self._translations[language.short_name] = {}
         result = []
-        width = 0
         row = []
         for button_key in self.buttons:
-            if width == self.row_width:
-                width = 0
-                row = []
+            if len(row) == self.row_width:
                 result.append(row)
-            width += 1
+                row = []
+
             translated = _(button_key, language=language)
             row.append(
                 types.KeyboardButton(translated)
@@ -127,6 +125,7 @@ class ReplyKeyboard(Keyboard):
 
         if len(row) > 0:
             result.append(row)
+
         return result
 
     def _setup_markups(self):
@@ -191,7 +190,7 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
 
     def __init__(self,
                  bot: aiogram.Bot = None,
-                 set_page_callback: Callable[[Users, any], None] = None):
+                 set_page_callback=None):
         self.bot = bot
 
         self._set_page_callback = set_page_callback
@@ -244,24 +243,24 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
     async def back(self, user: Users):
         try:
             prev_page, _ = self.path.rsplit('.', 1)
-            self._set_page_callback(user, prev_page)
+            await self._set_page_callback(user, prev_page)
         except ValueError:
             pass
 
     async def next(self, user: Users, page: any):
         if isinstance(page, str):
             try:
-                self._set_page_callback(
+                await self._set_page_callback(
                     user,
                     string.join_by(self.path, page)
                 )
             except ValueError:
-                self._set_page_callback(
+                await self._set_page_callback(
                     user,
                     string.join_by(page)
                 )
             return
-        self._set_page_callback(
+        await self._set_page_callback(
             user,
             page
         )

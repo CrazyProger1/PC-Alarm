@@ -32,7 +32,7 @@ class Router(metaclass=cls.SingletonMeta):
         new_page: Page | None = None
 
         if isinstance(page, str):
-            new_page = Page.get(page)
+            new_page = Page.get(page)()
         elif isinstance(page, Page):
             new_page = page
         elif issubclass(page, Page):
