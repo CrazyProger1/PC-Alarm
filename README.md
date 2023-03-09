@@ -8,12 +8,32 @@ PC-Alarm is an application that will help you detect someone else presence on yo
 
 ## TO-DO
 
-- [ ] Translation packs
+- [ ] Alarm (Main Goal)
+- [ ] L18N
     - [ ] English
     - [ ] Ukrainian
 
-- [ ] Commands
-    - [ ] 
+- [ ] Pages
+    - [x] Main
+    - [x] Settings
+    - [x] Interactive Actions
+    - [ ] L18N Settings
+
+- [ ] Interactive Actions / Commands
+    - [ ] Shutdown PC
+    - [ ] Restart PC
+    - [ ] End Session
+    - [ ] Say
+    - [ ] Music
+    - [ ] Noise
+    - [ ] Photo
+    - [ ] Screenshot
+
+- [ ] Configurator
+    - [ ] TOKEN
+    - [ ] Admin Telegram-ID
+    - [ ] UI L18N
+
 
 ## License
 
