@@ -1,5 +1,8 @@
+import os
 import pyautogui
 import asyncio
+import random
+import cv2
 
 from aiogram import types
 from app.bot.types import Executor, Command
@@ -50,3 +53,30 @@ class AlarmCommandsExecutor(Executor):
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         await getattr(self, command.command)()
+
+
+class PhotoCommandsExecutor(Executor):
+    commands = (
+        'photo',
+        'screenshot'
+    )
+
+    async def make_photo(self, user: Users):
+        path = f'photo{random.randint(1, 1000000000)}.png'
+        webcam = cv2.VideoCapture(0)
+        check, frame = webcam.read()
+        cv2.imwrite(filename=path, img=frame)
+        logging.logger.debug(f'Photo saved to {path}')
+        await self.sender.send_photo(user, path)
+        os.remove(path)
+
+    async def make_screenshot(self, user: Users):
+        path = f'screenshot{random.randint(1, 1000000000)}.png'
+        screenshot = pyautogui.screenshot()
+        screenshot.save(path)
+        logging.logger.debug(f'Screenshot saved to {path}')
+        await self.sender.send_photo(user, path)
+        os.remove(path)
+
+    async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
+        await getattr(self, f'make_{command.command}')(user)

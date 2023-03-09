@@ -24,3 +24,11 @@ class Sender(metaclass=cls.SingletonMeta):
             result.append(await self.send_message(user, text, **kwargs))
 
         return result
+
+    async def send_photo(self, user: Users, path: str, **kwargs) -> types.Message:
+        with open(path, 'rb') as f:
+            return await self.bot.send_photo(
+                user.id,
+                f,
+                **kwargs
+            )

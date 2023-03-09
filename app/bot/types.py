@@ -40,7 +40,7 @@ class Permission(metaclass=cls_tools.SingletonMeta):
 @dataclass
 class Command:
     command: str
-    params: list
+    params: tuple
 
 
 class Parser(cls_tools.Customizable, metaclass=cls_tools.SingletonMeta):

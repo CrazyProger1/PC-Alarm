@@ -23,7 +23,8 @@ class BasePage(Page):
         self.add_callback(events.BUTTON_CLICKED, self.on_button_clicked)  # for all keyboards
 
     @staticmethod
-    async def execute_command(command, **kwargs):
+    async def execute_command(text_command: str, *args, **kwargs):
+        command = Command(text_command, args)
         executor = Executor.get(command)
         await executor.execute(command, **kwargs)
 
@@ -54,28 +55,18 @@ class MainPage(BasePage):
         'Settings': 'settings'
     }
 
-    async def turn_on_alarm(self, **kwargs):
-        await self.execute_command(Command('turn_on_alarm', []), **kwargs)
-
-    async def turn_off_alarm(self, **kwargs):
-        await self.execute_command(Command('turn_off_alarm', []), **kwargs)
-
     async def on_button_clicked(self, keyboard: Keyboard, button: str, user: Users, message: types.Message, **kwargs):
         await super(MainPage, self).on_button_clicked(keyboard, button, user, message, **kwargs)
 
         match button:
             case 'Turn ON Alarm':
-                await self.turn_on_alarm(
-                    user=user,
-                    message=message,
-                    **kwargs
-                )
+                await self.execute_command('turn_on_alarm', user=user, message=message)
             case 'Turn OFF Alarm':
-                await self.turn_off_alarm(
-                    user=user,
-                    message=message,
-                    **kwargs
-                )
+                await self.execute_command('turn_off_alarm', user=user, message=message)
+            case 'Make Photo':
+                await self.execute_command('photo', user=user, message=message)
+            case 'Make Screenshot':
+                await self.execute_command('screenshot', user=user, message=message)
 
 
 class SettingsPage(BasePage):
