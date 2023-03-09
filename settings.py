@@ -37,7 +37,7 @@ DATABASE = {
     'AUTHENTICATOR_CLASS': 'custom.CustomAuthenticator'
 }
 
-LANGUAGE = {
+L18N = {
     'UI_LANGUAGE': json_conf.ui_language,
     'LOCALE_FOLDER': 'resources/languages',
     'BOT_DOMAIN': 'bot',

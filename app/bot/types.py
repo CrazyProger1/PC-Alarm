@@ -1,15 +1,15 @@
 import functools
-import aiogram
 import shlex
-
-from typing import Generator, Optional, Callable
-from aiogram import types
 from dataclasses import dataclass
+from typing import Optional, Callable
 
-from app.utils import cls as cls_tools, string, event
+import aiogram
+from aiogram import types
+
+from app.bot import events, enums
 from app.database import Users
 from app.settings import settings
-from app.bot import events, enums
+from app.utils import cls as cls_tools, string, event
 
 
 class Middleware(metaclass=cls_tools.SingletonMeta):
@@ -68,16 +68,57 @@ class Executor(metaclass=cls_tools.SingletonMeta):
         return cls._cached_get(command.command)
 
 
-class Keyboard(metaclass=cls_tools.SingletonMeta):
-    buttons: dict[str, str] = {}
+class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
+    buttons: list[str] = []
 
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
+        self._active_for_users = []
+        super(Keyboard, self).__init__()
+
+    def is_active(self, user: Users):
+        return user in self._active_for_users
 
     async def show(self, user: Users):
-        pass
+        self._active_for_users.append(user)
 
     async def hide(self, user: Users):
+        self._active_for_users.remove(user)
+
+    async def check_pressed(self, *args, **kwargs):
+        pass
+
+
+class ReplyKeyboard(Keyboard):
+    row_width: int
+
+    def __init__(self, *args, **kwargs):
+        self._markup = types.ReplyKeyboardMarkup(row_width=self.row_width)
+        super(ReplyKeyboard, self).__init__(*args, **kwargs)
+
+    async def show(self, user: Users):
+        await super(ReplyKeyboard, self).show(user)
+
+    async def hide(self, user: Users):
+        await super(ReplyKeyboard, self).hide(user)
+
+    async def check_pressed(self, *args, **kwargs):
+        pass
+
+
+class InlineKeyboard(Keyboard):
+    row_width: int
+
+    def __init__(self, *args, **kwargs):
+        super(InlineKeyboard, self).__init__(*args, **kwargs)
+
+    async def show(self, user: Users):
+        await super(InlineKeyboard, self).show(user)
+
+    async def hide(self, user: Users):
+        await super(InlineKeyboard, self).hide(user)
+
+    async def check_pressed(self, *args, **kwargs):
         pass
 
 
@@ -102,6 +143,22 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
     def _init_executors(self):
         for executor_cls in Executor.__subclasses__():
             executor_cls(bot=self.bot)
+
+    @functools.cached_property
+    def reply_keyboards(self):
+        return tuple(filter(lambda kb: isinstance(kb, ReplyKeyboard), self._keyboards))
+
+    @functools.cached_property
+    def inline_keyboards(self):
+        return tuple(filter(lambda kb: isinstance(kb, InlineKeyboard), self._keyboards))
+
+    async def show_keyboard(self, user: Users, keyboard: type[Keyboard]):
+        if keyboard in self.keyboard_classes:
+            await self._keyboards[self.keyboard_classes.index(keyboard)].show(user)
+
+    async def hide_keyboard(self, user: Users, keyboard: type[Keyboard]):
+        if keyboard in self.keyboard_classes:
+            await self._keyboards[self.keyboard_classes.index(keyboard)].hide(user)
 
     @classmethod
     @functools.cache
@@ -160,8 +217,24 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
     async def handle_message(self, message: types.Message, user: Users, **kwargs):
         await self._call(events.MESSAGE, message=message, user=user, **kwargs)
 
+        for keyboard in self.reply_keyboards:
+            if keyboard.is_active(user):
+                await keyboard.check_pressed(
+                    message=message,
+                    user=user,
+                    **kwargs
+                )
+
     async def handle_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
         await self._call(events.CALLBACK, callback=callback, user=user, **kwargs)
+
+        for keyboard in self.inline_keyboards:
+            if keyboard.is_active(user):
+                await keyboard.check_pressed(
+                    callback=callback,
+                    user=user,
+                    **kwargs
+                )
 
     async def handle_media(self, message: types.Message, user: Users, **kwargs):
         await self._call(events.MEDIA, message=message, user=user, **kwargs)

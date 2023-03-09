@@ -11,7 +11,7 @@ from .enums import ContentType
 
 class App:
     def __init__(self):
-        self._translator = translator.Translator(settings.LANGUAGE.BOT_DOMAIN)
+        self._translator = translator.Translator(settings.L18N.BOT_DOMAIN)
         self._bot = aiogram.Bot(token=settings.BOT.TOKEN)
         self._dispatcher = aiogram.Dispatcher(bot=self._bot)
         self._middlewares = list(

@@ -20,7 +20,7 @@ class Translator(metaclass=SingletonMeta):
                 self._loaded_packs.update({
                     language.short_name: gettext.translation(
                         domain=self._domain,
-                        localedir=settings.LANGUAGE.LOCALE_FOLDER,
+                        localedir=settings.L18N.LOCALE_FOLDER,
                         languages=[language.short_name]
                     )})
                 logger.debug(f'Loaded language: {language.short_name}')
@@ -53,5 +53,6 @@ class Translator(metaclass=SingletonMeta):
             return key
 
 
+@functools.cache
 def _(*args, **kwargs):
     return Translator().translate(*args, **kwargs)
