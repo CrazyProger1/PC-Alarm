@@ -1,15 +1,18 @@
 import functools
 import shlex
+import aiogram
+
 from dataclasses import dataclass
 from typing import Optional, Callable
-
-import aiogram
 from aiogram import types
 
 from app.bot import events, enums
-from app.database import Users
+from app.database import Users, Languages
 from app.settings import settings
 from app.utils import cls as cls_tools, string, event
+from app.utils.translator import _
+
+from .sender import Sender
 
 
 class Middleware(metaclass=cls_tools.SingletonMeta):
@@ -21,6 +24,8 @@ class Middleware(metaclass=cls_tools.SingletonMeta):
 
 
 class Permission(metaclass=cls_tools.SingletonMeta):
+    message_key: str
+
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
 
@@ -70,10 +75,12 @@ class Executor(metaclass=cls_tools.SingletonMeta):
 
 class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
     buttons: list[str] = []
+    caption_key: str
 
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
         self._active_for_users = []
+        self._sender = Sender()
         super(Keyboard, self).__init__()
 
     def is_active(self, user: Users):
@@ -83,27 +90,81 @@ class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
         self._active_for_users.append(user)
 
     async def hide(self, user: Users):
-        self._active_for_users.remove(user)
+        try:
+            self._active_for_users.remove(user)
+        except ValueError:
+            pass
 
     async def check_pressed(self, *args, **kwargs):
         pass
 
 
 class ReplyKeyboard(Keyboard):
-    row_width: int
+    row_width: int = 1
 
     def __init__(self, *args, **kwargs):
-        self._markup = types.ReplyKeyboardMarkup(row_width=self.row_width)
+        self._markups = {}
+        self._translations = {}
         super(ReplyKeyboard, self).__init__(*args, **kwargs)
+        self._setup_markups()
+
+    def _get_buttons(self, language: Languages) -> list[list[types.KeyboardButton]]:
+        self._translations[language.short_name] = {}
+        result = []
+        width = 0
+        row = []
+        for button_key in self.buttons:
+            if width == self.row_width:
+                width = 0
+                row = []
+                result.append(row)
+            width += 1
+            translated = _(button_key, language=language)
+            row.append(
+                types.KeyboardButton(translated)
+            )
+            self._translations[language.short_name].update({translated: button_key})
+
+        if len(row) > 0:
+            result.append(row)
+        return result
+
+    def _setup_markups(self):
+        for language in Languages.select():
+            markup = types.ReplyKeyboardMarkup(
+                self._get_buttons(language),
+                row_width=self.row_width
+            )
+            self._markups.update({language.short_name: markup})
 
     async def show(self, user: Users):
+        markup = self._markups.get(user.language.short_name)
         await super(ReplyKeyboard, self).show(user)
+        msg = await self._sender.send_message(
+            user,
+            _(self.caption_key, user=user),
+            reply_markup=markup
+        )
+        user.state.reply_keyboard_msg_id = msg.message_id
 
     async def hide(self, user: Users):
-        await super(ReplyKeyboard, self).hide(user)
+        msgid = user.state.reply_keyboard_msg_id
+        if msgid:
+            await self.bot.delete_message(user.id, msgid)
+            await super(ReplyKeyboard, self).hide(user)
 
-    async def check_pressed(self, *args, **kwargs):
-        pass
+    async def check_pressed(self, message: types.Message, user: Users, **kwargs):
+        translations = self._translations.get(user.language.short_name)
+
+        button_key = translations.get(message.text)
+
+        if button_key:
+            await self._call(
+                events.BUTTON_CLICKED,
+                button=button_key,
+                user=user,
+                message=message
+            )
 
 
 class InlineKeyboard(Keyboard):
@@ -136,13 +197,19 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
         self._set_page_callback = set_page_callback
         self._command_parser = Parser()
         self._keyboards = tuple(keyboard_cls(self.bot) for keyboard_cls in self.keyboard_classes)
+        self._sender = Sender()
 
         self._init_executors()
+        self._bind_callbacks()
         super(Page, self).__init__()
 
     def _init_executors(self):
         for executor_cls in Executor.__subclasses__():
             executor_cls(bot=self.bot)
+
+    def _bind_callbacks(self):
+        for keyboard in self._keyboards:
+            keyboard.add_callback(events.BUTTON_CLICKED, self.handle_button_click)
 
     @functools.cached_property
     def reply_keyboards(self):
@@ -242,6 +309,9 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
     async def handle_command(self, message: types.Message, user: Users, **kwargs):
         await self._call(events.COMMAND, message=message, user=user, **kwargs)
         await self._execute_command(message, user, **kwargs)
+
+    async def handle_button_click(self, keyboard: Keyboard, **kwargs):
+        await self._call(events.BUTTON_CLICKED, keyboard=keyboard, **kwargs)
 
     def __repr__(self):
         return self.path

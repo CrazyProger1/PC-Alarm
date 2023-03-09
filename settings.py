@@ -1,3 +1,4 @@
+from aiogram import types
 from app.utils.config import JSONConfig, ENVConfig
 
 FILES = {
@@ -62,4 +63,8 @@ MIDDLEWARES = [
 
 CATEGORIES = {
     'FOLDER': 'resources/categories'
+}
+
+MESSAGES = {
+    'PARSE_MODE': types.ParseMode.MARKDOWN_V2
 }
