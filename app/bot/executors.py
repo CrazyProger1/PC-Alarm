@@ -4,10 +4,11 @@ import asyncio
 import random
 import cv2
 
+from pathlib import Path
 from aiogram import types
 from app.bot.types import Executor, Command
 from app.database import Users
-from app.utils import logging
+from app.utils import logging, threads
 from app.utils.translator import _
 
 
@@ -61,13 +62,20 @@ class PhotoCommandsExecutor(Executor):
         'screenshot'
     )
 
-    async def make_photo(self, user: Users):
-        path = f'photo{random.randint(1, 1000000000)}.png'
+    @threads.thread
+    def _threaded_make_photo(self, path: str):
         webcam = cv2.VideoCapture(0)
         check, frame = webcam.read()
         cv2.imwrite(filename=path, img=frame)
         logging.logger.debug(f'Photo saved to {path}')
-        await self.sender.send_photo(user, path)
+
+    async def make_photo(self, user: Users):
+        path = Path(f'photo{random.randint(1, 1000000000)}.png')
+        self._threaded_make_photo(str(path))
+
+        while not path.exists():
+            await asyncio.sleep(1)
+        await self.sender.send_photo(user, str(path))
         os.remove(path)
 
     async def make_screenshot(self, user: Users):
