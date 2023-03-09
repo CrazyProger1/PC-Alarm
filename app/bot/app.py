@@ -3,6 +3,7 @@ import aiogram
 from aiogram import types
 from app.settings import settings
 from app.utils import import_utils, translator
+from .sender import Sender
 from .router import Router
 from .pages import *
 from .executors import *
@@ -18,6 +19,7 @@ class App:
             import_utils.import_module(middleware_path)(bot=self._bot)
             for middleware_path in settings.MIDDLEWARES
         )
+        self._sender = Sender(bot=self._bot)
         self._router = Router(bot=self._bot)
 
     @staticmethod
