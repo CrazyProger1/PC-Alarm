@@ -6,3 +6,4 @@ MUSIC_PAGE_REPLY_KEYBOARD_CAPTION_KEY = 'Send me music or voice message and I wi
 BEEP_PAGE_REPLY_KEYBOARD_CAPTION_KEY = 'Choose the beep frequency or send custom'
 LANGUAGE_PAGE_REPLY_KEYBOARD_CAPTION_KEY = 'Language Settings'
 LANGUAGE_SELECTING_INLINE_KEYBOARD_CAPTION_KEY = 'Choose Language'
+OWNER_ADDING_PAGE_REPLY_KEYBOARD_CAPTION_KEY = 'Enter the @username'

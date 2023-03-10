@@ -10,11 +10,12 @@ import winsound
 from pathlib import Path
 from aiogram import types
 from app.bot.types import Executor, Command
-from app.database import Users, Languages
+from app.database import Users, Languages, Categories
 from app.utils import logging, threads, filesystem
 from app.utils.translator import _
 from app.bot.router import Router
-from app.bot.pages import SayPage, MusicPage, BeepPage, LanguagePage
+from app.bot.pages import SayPage, MusicPage, BeepPage, LanguagePage, OwnerAddingPage
+from app.exceptions import *
 
 
 class BaseCommandsExecutor(Executor):
@@ -198,6 +199,7 @@ class SetCommandExecutor(Executor):
     async def set_language(self, user: Users, language_id: str):
         try:
             user.language = Languages.get_by_id(language_id)
+            user.save()
             logging.logger.debug(f'User {user} changed language to {user.language.short_name}')
             await self.sender.send_message(
                 user,
@@ -216,3 +218,27 @@ class SetCommandExecutor(Executor):
         match target:
             case 'language':
                 await self.set_language(user, value)
+
+
+class AddOwnerCommandExecutor(Executor):
+    commands = (
+        'add_owner',
+    )
+
+    async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
+        try:
+            username = command.params[0]
+        except IndexError:
+            return await Router().set_page(user, OwnerAddingPage.path)
+
+        if username.startswith('@'):
+            username = username.removeprefix('@')
+
+        try:
+            user2 = Users.get(username=username)
+        except Users.DoesNotExist:
+            raise BotInteractionError(_('This user is not in the database', user=user))
+
+        user2.category = Categories.get_owner()
+        user2.save()
+        await self.sender.send_message(user, _('The user has been added to the owners group', user=user))

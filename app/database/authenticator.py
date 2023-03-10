@@ -22,4 +22,6 @@ class Authenticator(Customizable):
 
         if db_user.id == settings.BOT.ADMIN:
             db_user.category = Categories.get_admin()
+            db_user.save()
+
         return db_user

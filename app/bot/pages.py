@@ -13,7 +13,7 @@ class BasePage(Page):
     path = 'base'
     permission_classes = (
         IsNotBanned,
-        IsOwnerOrAdmin
+        IsOwnerOrAdminOrHigher
     )
 
     page_transfers: dict[str, str] = {}
@@ -28,7 +28,8 @@ class BasePage(Page):
     async def execute_command(text_command: str, *args, **kwargs):
         command = Command(text_command, args)
         executor = Executor.get(command)
-        await executor.execute(command, **kwargs)
+        if executor:
+            return await executor.execute(command, **kwargs)
 
     async def on_initialize(self, user: Users, **kwargs):
         await self.keyboards[0].show(user)
@@ -57,7 +58,8 @@ class MainPage(BasePage):
 
     page_transfers = {
         'Interaction': 'interaction',
-        'Settings': 'settings'
+        'Settings': 'settings',
+        'Add Owner': 'add_owner'
     }
 
     async def on_button_clicked(self, keyboard: Keyboard, button: str, user: Users, message: types.Message, **kwargs):
@@ -196,3 +198,20 @@ class LanguagePage(BasePage):
 
     async def on_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
         await self.execute_command('set', 'language', callback.data, user=user, message=None)
+
+
+class OwnerAddingPage(BasePage):
+    path = 'main.add_owner'
+    keyboard_classes = (
+        OwnerAddingPageReplyKeyboard,
+    )
+    permission_classes = (
+        IsAdmin,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(OwnerAddingPage, self).__init__(*args, **kwargs)
+        self.add_callback(events.MESSAGE, self.on_message)
+
+    async def on_message(self, message: types.Message, user: Users, **kwargs):
+        await self.execute_command('add_owner', message.text, user=user, message=message)

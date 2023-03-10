@@ -101,3 +101,11 @@ class LanguageSelectingInlineKeyboard(InlineKeyboard):
                 types.InlineKeyboardButton(language.full_name, callback_data=language.short_name)
             ])
         return result
+
+
+class OwnerAddingPageReplyKeyboard(ReplyKeyboard):
+    button_keys = (
+        'Back',
+    )
+
+    caption_key = OWNER_ADDING_PAGE_REPLY_KEYBOARD_CAPTION_KEY
