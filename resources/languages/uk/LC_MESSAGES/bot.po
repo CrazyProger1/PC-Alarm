@@ -1,0 +1,96 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2023-03-10 14:52+0200\n"
+"PO-Revision-Date: 2023-03-10 15:16+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 3.2.2\n"
+
+# app\bot\executors.py
+msgid "Alarm Turned ON"
+msgstr "Сигналізація активована"
+
+# app\bot\executors.py
+msgid "ALARM"
+msgstr "🚨ТРИВОГА🚨"
+
+# app\bot\executors.py
+msgid "Alarm Turned OFF"
+msgstr "Сигналізація деактивована"
+
+# app\bot\executors.py
+msgid "Shutting down..."
+msgstr "Вимкнення комп'ютера..."
+
+# app\bot\executors.py
+msgid "Restarting..."
+msgstr "Перезавантаження комп'ютера..."
+
+# app\bot\executors.py
+msgid "Ending session..."
+msgstr "Завершення сеансу..."
+
+# app\bot\executors.py
+msgid "Said"
+msgstr "Промовив"
+
+# app\bot\executors.py
+msgid "Played"
+msgstr "Зіграв"
+
+# app\bot\executors.py
+msgid "Beep played"
+msgstr "Звуковий сигнал зіграв"
+
+msgid "Main menu"
+msgstr "Головне меню"
+
+msgid "Settings"
+msgstr "Налаштування"
+
+msgid "Interactive Actions"
+msgstr "Дії"
+
+msgid "Send me a text and I will say it on the target machine"
+msgstr "Надішліть мені текстове повідомлення, і я скажу його на цільовій машині"
+
+msgid "Send me music or voice message and I will play it on the target machine"
+msgstr "Надішліть мені музику чи голосове повідомлення, і я відтворю їх на цільовій машині"
+
+msgid "Choose the beep frequency or send custom"
+msgstr "Виберіть частоту звукового сигналу або надішліть числом"
+
+msgid "Language Settings"
+msgstr "Налаштування мови"
+
+msgid "Choose Language"
+msgstr "Оберіть мову"
+
+msgid "Add Owner"
+msgstr "Додати власника"
+
+msgid "Turn ON Alarm"
+msgstr "Активувати сигналізацію"
+
+msgid "Turn OFF Alarm"
+msgstr "Деативувати сигналізацію"
+
+msgid "Make Photo"
+msgstr "Зробити фото"
+
+msgid "Make Screenshot"
+msgstr "Зробити скріншот"
+
+msgid "Interaction"
+msgstr "Додаткові дії"
