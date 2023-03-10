@@ -75,7 +75,7 @@ class Executor(metaclass=cls_tools.SingletonMeta):
 
 
 class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
-    buttons: tuple[str] = []
+    button_keys: tuple[str] = []
     caption_key: str
 
     def __init__(self, bot: aiogram.Bot):
@@ -83,6 +83,36 @@ class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
         self._active_for_users = []
         self._sender = Sender()
         super(Keyboard, self).__init__()
+
+    @functools.cache
+    def get_button_keys(self) -> tuple[str]:
+        return self.button_keys
+
+    @functools.cache
+    def get_button_text_translation(self, key: str, language: Languages):
+        return _(key, language=language)
+
+    @functools.cache
+    def get_buttons(self) -> list[types.KeyboardButton | types.InlineKeyboardButton]:
+        pass
+
+    @functools.cache
+    def get_markup(self, language: Languages) -> types.ReplyKeyboardMarkup | types.InlineKeyboardMarkup:
+        pass
+
+    @functools.cache
+    def get_translation_key_pairs(self, language: Languages) -> dict[str, str]:
+        result = {}
+        for button_key in self.get_button_keys():
+            translated = self.get_button_text_translation(button_key, language=language)
+            result.update({
+                translated: button_key
+            })
+        return result
+
+    @functools.cache
+    def get_pressed(self, text: str, language: Languages) -> str | None:
+        return self.get_translation_key_pairs(language=language).get(text)
 
     def is_active(self, user: Users):
         return user in self._active_for_users
@@ -104,41 +134,32 @@ class ReplyKeyboard(Keyboard):
     row_width: int = 1
 
     def __init__(self, *args, **kwargs):
-        self._markups = {}
-        self._translations = {}
         super(ReplyKeyboard, self).__init__(*args, **kwargs)
-        self._setup_markups()
 
-    def _get_buttons(self, language: Languages) -> list[list[types.KeyboardButton]]:
-        self._translations[language.short_name] = {}
-        result = []
-        row = []
-        for button_key in self.buttons:
+    @functools.cache
+    def get_buttons(self, language: Languages) -> list[list[types.KeyboardButton | types.InlineKeyboardButton]]:
+        result, row = [], []
+        for button_key in self.get_button_keys():
             if len(row) == self.row_width:
                 result.append(row)
                 row = []
 
-            translated = _(button_key, language=language)
-            row.append(
-                types.KeyboardButton(translated)
-            )
-            self._translations[language.short_name].update({translated: button_key})
+            translated = self.get_button_text_translation(button_key, language=language)
+            row.append(types.KeyboardButton(translated))
 
         if len(row) > 0:
             result.append(row)
-
         return result
 
-    def _setup_markups(self):
-        for language in Languages.select():
-            markup = types.ReplyKeyboardMarkup(
-                self._get_buttons(language),
-                row_width=self.row_width
-            )
-            self._markups.update({language.short_name: markup})
+    @functools.cache
+    def get_markup(self, language: Languages) -> types.ReplyKeyboardMarkup | types.InlineKeyboardMarkup:
+        return types.ReplyKeyboardMarkup(
+            self.get_buttons(language=language),
+            row_width=self.row_width
+        )
 
     async def show(self, user: Users):
-        markup = self._markups.get(user.language.short_name)
+        markup = self.get_markup(language=user.language)
         await super(ReplyKeyboard, self).show(user)
         msg = await self._sender.send_message(
             user,
@@ -154,10 +175,7 @@ class ReplyKeyboard(Keyboard):
             await super(ReplyKeyboard, self).hide(user)
 
     async def check_pressed(self, message: types.Message, user: Users, **kwargs):
-        translations = self._translations.get(user.language.short_name)
-
-        button_key = translations.get(message.text)
-
+        button_key = self.get_pressed(message.text, user.language)
         if button_key:
             await self._call(
                 events.BUTTON_CLICKED,

@@ -20,20 +20,19 @@ PC-Alarm is an application that will help you detect someone else presence on yo
     - [ ] L18N Settings
 
 - [ ] Interactive Actions / Commands
-    - [ ] Shutdown PC
-    - [ ] Restart PC
-    - [ ] End Session
-    - [ ] Say
-    - [ ] Music
-    - [ ] Noise
-    - [ ] Photo
-    - [ ] Screenshot
+    - [x] Shutdown PC
+    - [x] Restart PC
+    - [x] End Session
+    - [x] Say
+    - [x] Music
+    - [x] Beep
+    - [x] Photo
+    - [x] Screenshot
 
 - [ ] Configurator
     - [ ] TOKEN
     - [ ] Admin Telegram-ID
     - [ ] UI L18N
-
 
 ## License
 

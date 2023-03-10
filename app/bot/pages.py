@@ -81,6 +81,9 @@ class SettingsPage(BasePage):
     keyboard_classes = (
         SettingsPageReplyKeyboard,
     )
+    page_transfers = {
+        'Language': 'language'
+    }
 
 
 class InteractionPage(BasePage):
@@ -167,3 +170,19 @@ class BeepPage(BasePage):
         text = message.text.strip().split(' ')[0]
         if text.isdigit():
             await self.execute_command('beep', int(text), user=user, message=message)
+
+
+class LanguagePage(BasePage):
+    path = 'main.settings.language'
+    keyboard_classes = (
+        LanguagePageReplyKeyboard,
+        LanguageSelectingInlineKeyboard
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(LanguagePage, self).__init__(*args, **kwargs)
+        self.add_callback(events.INIT, self.on_initialize)
+
+    async def on_initialize(self, user: Users, **kwargs):
+        await super(LanguagePage, self).on_initialize(user, **kwargs)
+        await self.show_keyboard(user, LanguageSelectingInlineKeyboard)

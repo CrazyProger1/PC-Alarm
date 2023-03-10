@@ -1,9 +1,9 @@
-from .types import ReplyKeyboard, InlineKeyboard
 from .keys import *
+from .types import ReplyKeyboard, InlineKeyboard
 
 
 class MainPageReplyKeyboard(ReplyKeyboard):
-    buttons = (
+    button_keys = (
         'Settings',
         'Add Owner',
         'Turn ON Alarm',
@@ -18,15 +18,17 @@ class MainPageReplyKeyboard(ReplyKeyboard):
 
 
 class SettingsPageReplyKeyboard(ReplyKeyboard):
-    buttons = (
-        'Back',
+    button_keys = (
+        'Language',
+        'Back'
+
     )
-    row_width = 2
+    row_width = 1
     caption_key = SETTINGS_PAGE_REPLY_KEYBOARD_CAPTION_KEY
 
 
 class InteractionPageReplyKeyboard(ReplyKeyboard):
-    buttons = (
+    button_keys = (
         'Shutdown PC',
         'Restart PC',
         'End Session',
@@ -40,7 +42,7 @@ class InteractionPageReplyKeyboard(ReplyKeyboard):
 
 
 class SayPageReplyKeyboard(ReplyKeyboard):
-    buttons = (
+    button_keys = (
         'Back',
     )
     row_width = 1
@@ -48,7 +50,7 @@ class SayPageReplyKeyboard(ReplyKeyboard):
 
 
 class MusicPageReplyKeyboard(ReplyKeyboard):
-    buttons = (
+    button_keys = (
         'Back',
     )
 
@@ -57,7 +59,7 @@ class MusicPageReplyKeyboard(ReplyKeyboard):
 
 
 class BeepPageReplyKeyboard(ReplyKeyboard):
-    buttons = (
+    button_keys = (
         '20000 mHz',
         '18000 mHz',
         '15000 mHz',
@@ -69,3 +71,16 @@ class BeepPageReplyKeyboard(ReplyKeyboard):
 
     row_width = 2
     caption_key = BEEP_PAGE_REPLY_KEYBOARD_CAPTION_KEY
+
+
+class LanguagePageReplyKeyboard(ReplyKeyboard):
+    button_keys = (
+        'Back',
+    )
+
+    row_width = 1
+    caption_key = LANGUAGE_PAGE_REPLY_KEYBOARD_CAPTION_KEY
+
+
+class LanguageSelectingInlineKeyboard(InlineKeyboard):
+    pass

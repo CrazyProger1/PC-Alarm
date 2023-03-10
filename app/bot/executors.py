@@ -1,5 +1,4 @@
 import os
-
 import playsound
 import pyautogui
 import asyncio
