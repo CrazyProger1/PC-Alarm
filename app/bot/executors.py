@@ -88,3 +88,39 @@ class PhotoCommandsExecutor(Executor):
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         await getattr(self, f'make_{command.command}')(user)
+
+
+class PowerCommandsExecutor(Executor):
+    commands = (
+        'shutdown',
+        'restart',
+        'end_session'
+    )
+
+    async def shutdown(self, user: Users):
+        logging.logger.debug('Shutting down...')
+
+    async def restart(self, user: Users):
+        logging.logger.debug('Restarting...')
+
+    async def end_session(self, user: Users):
+        logging.logger.debug('Ending session...')
+
+    async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
+        await getattr(self, command.command)(user)
+
+
+class SoundCommandsExecutor(Executor):
+    commands = (
+        'say'
+    )
+
+    async def say(self, command: Command, user: Users):
+        try:
+            text = command.params[0]
+        except IndexError:
+            raise
+        print(text)
+
+    async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
+        await getattr(self, command.command)(command, user)

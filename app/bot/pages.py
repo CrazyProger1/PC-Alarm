@@ -47,7 +47,7 @@ class MainPage(BasePage):
     default = True
 
     keyboard_classes = (
-        MainReplyKeyboard,
+        MainPageReplyKeyboard,
     )
 
     page_transfers = {
@@ -58,22 +58,26 @@ class MainPage(BasePage):
     async def on_button_clicked(self, keyboard: Keyboard, button: str, user: Users, message: types.Message, **kwargs):
         await super(MainPage, self).on_button_clicked(keyboard, button, user, message, **kwargs)
 
-        match button:
-            case 'Turn ON Alarm':
-                await self.execute_command('turn_on_alarm', user=user, message=message)
-            case 'Turn OFF Alarm':
-                await self.execute_command('turn_off_alarm', user=user, message=message)
-            case 'Make Photo':
-                await self.execute_command('photo', user=user, message=message)
-            case 'Make Screenshot':
-                await self.execute_command('screenshot', user=user, message=message)
+        commands = {
+            'Turn ON Alarm': 'turn_on_alarm',
+            'Turn OFF Alarm': 'turn_off_alarm',
+            'Make Photo': 'photo',
+            'Make Screenshot': 'screenshot'
+        }
+        kwgs = {'user': user, 'message': message}
+        args = []
+
+        command = commands.get(button)
+
+        if command:
+            await self.execute_command(command, *args, **kwgs)
 
 
 class SettingsPage(BasePage):
     path = 'main.settings'
 
     keyboard_classes = (
-        SettingsReplyKeyboard,
+        SettingsPageReplyKeyboard,
     )
 
 
@@ -81,5 +85,39 @@ class InteractionPage(BasePage):
     path = 'main.interaction'
 
     keyboard_classes = (
-        InteractionReplyKeyboard,
+        InteractionPageReplyKeyboard,
     )
+    page_transfers = {
+        'Say': 'say'
+    }
+
+    async def on_button_clicked(self, keyboard: Keyboard, button: str, user: Users, message: types.Message, **kwargs):
+        await super(InteractionPage, self).on_button_clicked(keyboard, button, user, message, **kwargs)
+
+        commands = {
+            'Shutdown PC': 'shutdown',
+            'Restart PC': 'restart',
+            'End Session': 'end_session'
+        }
+        kwgs = {'user': user, 'message': message}
+        args = []
+
+        command = commands.get(button)
+
+        if command:
+            await self.execute_command(command, *args, **kwgs)
+
+
+class SayPage(BasePage):
+    path = 'main.interaction.say'
+
+    keyboard_classes = (
+        SayPageReplyKeyboard,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(SayPage, self).__init__(*args, **kwargs)
+        self.add_callback(events.MESSAGE, self.on_message)
+
+    async def on_message(self, message: types.Message, user: Users, **kwargs):
+        await self.execute_command('say', message.text, message=message, user=user)
