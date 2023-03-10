@@ -1,7 +1,10 @@
+import time
+
 from aiogram import types
 
 from app.bot import events
 from app.database import Users
+from app.utils import filesystem
 from .keyboards import *
 from .permissions import IsNotBanned
 from .types import Page, Keyboard, Executor, Command
@@ -88,7 +91,8 @@ class InteractionPage(BasePage):
         InteractionPageReplyKeyboard,
     )
     page_transfers = {
-        'Say': 'say'
+        'Say': 'say',
+        'Music': 'music'
     }
 
     async def on_button_clicked(self, keyboard: Keyboard, button: str, user: Users, message: types.Message, **kwargs):
@@ -120,4 +124,30 @@ class SayPage(BasePage):
         self.add_callback(events.MESSAGE, self.on_message)
 
     async def on_message(self, message: types.Message, user: Users, **kwargs):
+        if message.text == 'Back':
+            return
         await self.execute_command('say', message.text, message=message, user=user)
+
+
+class MusicPage(BasePage):
+    path = 'main.interaction.music'
+    keyboard_classes = (
+        MusicPageReplyKeyboard,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(MusicPage, self).__init__(*args, **kwargs)
+        self.add_callback(events.MEDIA, self.on_media)
+
+    async def on_media(self, message: types.Message, user: Users, **kwargs):
+        if message.content_type in {'voice', 'audio'}:
+            if message.content_type == 'voice':
+                file = await message.voice.get_file()
+
+                path = filesystem.safe_filename('.ogg', 'sound')
+            else:
+                file = await message.audio.get_file()
+                path = filesystem.safe_filename('.mp3', 'sound')
+
+            await self.bot.download_file(file.file_path, destination=path)
+            await self.execute_command('music', path, user=user, message=message)

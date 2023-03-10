@@ -45,3 +45,12 @@ class SayPageReplyKeyboard(ReplyKeyboard):
     )
     row_width = 1
     caption_key = SAY_PAGE_REPLY_KEYBOARD_CAPTION_KEY
+
+
+class MusicPageReplyKeyboard(ReplyKeyboard):
+    buttons = (
+        'Back',
+    )
+
+    row_width = 1
+    caption_key = MUSIC_PAGE_REPLY_KEYBOARD_CAPTION_KEY

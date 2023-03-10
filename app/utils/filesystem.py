@@ -1,4 +1,6 @@
+import time
 from pathlib import Path
+from .string import join_by
 
 
 def check_file(path: str):
@@ -36,3 +38,7 @@ def iter_files(folder):
     check_folder(folder)
 
     return Path(folder).iterdir()
+
+
+def safe_filename(ext: str, prefix: str = '') -> str:
+    return prefix + join_by(str(time.time()), ext)
