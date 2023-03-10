@@ -1,12 +1,12 @@
 import os
 
-import playsound as playsound
+import playsound
 import pyautogui
 import asyncio
-import random
 import cv2
 import pyttsx3
 import gtts
+import winsound
 
 from pathlib import Path
 from aiogram import types
@@ -15,7 +15,7 @@ from app.database import Users, Languages
 from app.utils import logging, threads, filesystem
 from app.utils.translator import _
 from app.bot.router import Router
-from app.bot.pages import SayPage, MusicPage
+from app.bot.pages import SayPage, MusicPage, BeepPage
 
 
 class BaseCommandsExecutor(Executor):
@@ -76,7 +76,7 @@ class PhotoCommandsExecutor(Executor):
         logging.logger.debug(f'Photo saved to {path}')
 
     async def make_photo(self, user: Users):
-        path = Path(f'photo{random.randint(1, 1000000000)}.png')
+        path = Path(filesystem.safe_filename('.png', 'photo'))
         self._threaded_make_photo(str(path))
 
         while not path.exists():
@@ -85,7 +85,7 @@ class PhotoCommandsExecutor(Executor):
         os.remove(path)
 
     async def make_screenshot(self, user: Users):
-        path = f'screenshot{random.randint(1, 1000000000)}.png'
+        path = filesystem.safe_filename('.png', 'screenshot')
         screenshot = pyautogui.screenshot()
         screenshot.save(path)
         logging.logger.debug(f'Screenshot saved to {path}')
@@ -105,12 +105,15 @@ class PowerCommandsExecutor(Executor):
 
     async def shutdown(self, user: Users):
         logging.logger.debug('Shutting down...')
+        await self.sender.send_message(user, _('Shutting down...'))
 
     async def restart(self, user: Users):
         logging.logger.debug('Restarting...')
+        await self.sender.send_message(user, _('Restarting...'))
 
     async def end_session(self, user: Users):
         logging.logger.debug('Ending session...')
+        await self.sender.send_message(user, _('Ending session...'))
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         await getattr(self, command.command)(user)
@@ -119,7 +122,8 @@ class PowerCommandsExecutor(Executor):
 class SoundCommandsExecutor(Executor):
     commands = (
         'say',
-        'music'
+        'music',
+        'beep'
     )
 
     def __init__(self, *args, **kwargs):
@@ -127,7 +131,7 @@ class SoundCommandsExecutor(Executor):
         self.engine = pyttsx3.init()
 
     @threads.thread
-    def play_sound(self, sound_path: str):
+    def _play_sound(self, sound_path: str):
         filename, ext = os.path.splitext(sound_path)
 
         if ext == '.ogg':
@@ -148,14 +152,40 @@ class SoundCommandsExecutor(Executor):
             return await Router().set_page(user, SayPage.path)
         path = filesystem.safe_filename('.mp3', 'sound')
         audio.save(path)
-        self.play_sound(path)
+        self._play_sound(path)
+        while Path(path).exists():
+            await asyncio.sleep(1)
+        await self.sender.send_message(user, _('Said'))
 
     async def music(self, command: Command, user: Users):
         try:
             path = command.params[0]
         except IndexError:
             return await Router().set_page(user, MusicPage.path)
-        self.play_sound(path)
+        self._play_sound(path)
+        while Path(path).exists():
+            await asyncio.sleep(1)
+        await self.sender.send_message(user, _('Played'))
+
+    @threads.thread
+    def _threaded_beep(self, freq: int, duration: int):
+        winsound.Beep(freq, duration)
+
+    async def beep(self, command: Command, user: Users):
+        try:
+            freq = command.params[0]
+        except IndexError:
+            return await Router().set_page(user, BeepPage.path)
+        duration_mcs = 5000
+        try:
+            if len(command.params) > 1:
+                duration_mcs = int(command.params[1])
+        except ValueError:
+            pass
+
+        self._threaded_beep(freq, 5000)
+        await asyncio.sleep(duration_mcs / 1000)
+        await self.sender.send_message(user, _('Beep played'))
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         await getattr(self, command.command)(command, user)

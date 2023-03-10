@@ -32,7 +32,7 @@ class InteractionPageReplyKeyboard(ReplyKeyboard):
         'End Session',
         'Say',
         'Music',
-        'Noise',
+        'Beep',
         'Back'
     )
     row_width = 3
@@ -54,3 +54,18 @@ class MusicPageReplyKeyboard(ReplyKeyboard):
 
     row_width = 1
     caption_key = MUSIC_PAGE_REPLY_KEYBOARD_CAPTION_KEY
+
+
+class BeepPageReplyKeyboard(ReplyKeyboard):
+    buttons = (
+        '20000 mHz',
+        '18000 mHz',
+        '15000 mHz',
+        '13000 mHz',
+        '10000 mHz',
+        '5000 mHz',
+        'Back',
+    )
+
+    row_width = 2
+    caption_key = BEEP_PAGE_REPLY_KEYBOARD_CAPTION_KEY

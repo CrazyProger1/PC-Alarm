@@ -1,10 +1,9 @@
-import time
-
 from aiogram import types
 
 from app.bot import events
 from app.database import Users
 from app.utils import filesystem
+
 from .keyboards import *
 from .permissions import IsNotBanned
 from .types import Page, Keyboard, Executor, Command
@@ -92,7 +91,8 @@ class InteractionPage(BasePage):
     )
     page_transfers = {
         'Say': 'say',
-        'Music': 'music'
+        'Music': 'music',
+        'Beep': 'beep'
     }
 
     async def on_button_clicked(self, keyboard: Keyboard, button: str, user: Users, message: types.Message, **kwargs):
@@ -151,3 +151,19 @@ class MusicPage(BasePage):
 
             await self.bot.download_file(file.file_path, destination=path)
             await self.execute_command('music', path, user=user, message=message)
+
+
+class BeepPage(BasePage):
+    path = 'main.interaction.beep'
+    keyboard_classes = (
+        BeepPageReplyKeyboard,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(BeepPage, self).__init__(*args, **kwargs)
+        self.add_callback(events.MESSAGE, self.on_message)
+
+    async def on_message(self, message: types.Message, user: Users, **kwargs):
+        text = message.text.strip().split(' ')[0]
+        if text.isdigit():
+            await self.execute_command('beep', int(text), user=user, message=message)
