@@ -154,7 +154,7 @@ def main():
 
 if __name__ == '__main__':
     progargs = parse_args()
-    pattern = progargs.expression or fr'\W\{progargs.prefix}\(["\'](.*)["\']\)'
+    pattern = progargs.expression or fr'\W\{progargs.prefix}\(["\'](.*)["\'][\),]'
     to_ignore = set(progargs.ignore) or set()
     to_ignore.update(('venv', '.idea', '.git', '__pycache__'))
     log_pos(f'Ignoring names: {", ".join(to_ignore)}')

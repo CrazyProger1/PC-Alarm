@@ -1,8 +1,1 @@
-{
-  "ui_language": "en",
-  "logging": {
-    "file": "main.log",
-    "filemode": "w",
-    "level": 10
-  }
-}
+{"ui_language": "uk", "logging": {"file": "main.log", "filemode": "w", "level": 10}}

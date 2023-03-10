@@ -12,7 +12,9 @@ import functools
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from app.settings import settings
-from app.utils.logging import *
+from app.utils import logging, config
+from app.utils.translator import _
+from app.database import Languages
 
 
 class Configurator(QtWidgets.QMainWindow):
@@ -132,33 +134,44 @@ QListWidget{
 
     @functools.cache
     def _get_langs(self) -> tuple:
-        return 'Ukrainian', 'English'
+        return Languages.select()
 
     def _get_selected_language(self):
         return self._get_langs()[self.language_selecting.currentIndex()]
 
     def _on_language_changed(self):
-        logger.debug(f'Language changed: {self.language_selecting.currentText()}')
-        settings.L18N = self._get_selected_language()
+        lang_short_name = self._get_selected_language().short_name
+        logging.logger.debug(f'Language {lang_short_name} selected')
+        settings.L18N.UI_LANGUAGE = lang_short_name
         self._retranslate_ui()
 
     def _on_save(self):
-        logger.debug(f'Configuration saved')
+        logging.logger.debug(f'Configuration saved')
+
+        json_config = config.JSONConfig.load(settings.FILES['JSON_CONFIG_FILE'])
+        json_config.ui_language = settings.L18N.UI_LANGUAGE
+        json_config.save(settings.FILES['JSON_CONFIG_FILE'])
+
+        env_config = config.ENVConfig.load(settings.FILES['ENV_CONFIG_FILE'])
+        env_config.TOKEN = self.token_line.text()
+        env_config.ADMIN = self.admin_tgid_line.text()
+        env_config.save(settings.FILES['ENV_CONFIG_FILE'])
 
     def _retranslate_ui(self):
-        language_name = settings.L18N
+        curr_lang_pk = settings.L18N.UI_LANGUAGE
+        curr_lang = Languages.get_by_id(curr_lang_pk)
 
-        # translator = Translator(key_prefix='configurator')
-        # language = Languages.get_by_id(language_name)
-        # pack = translator.get_pack(language)
+        self.setWindowTitle(_('Configurator', language=curr_lang))
+        self.save_button.setText(_('Save', language=curr_lang))
+        self.token_label.setText(_('Token:', language=curr_lang))
+        self.admin_tgid_label.setText(_('Admin Telegram-ID:', language=curr_lang))
+        self.program_label.setText(
+            _('{0} V{1} by crazyproger1', language=curr_lang).format(
+                settings.APP.NAME,
+                settings.APP.VERSION
+            ))
 
-        # self.setWindowTitle(f'{settings.APP_NAME} Configurator')
-        # self.save_button.setText(pack.translate('buttons.save'))
-        # self.token_label.setText(pack.translate('labels.token'))
-        # self.admin_tgid_label.setText(pack.translate('labels.admin_id'))
-        # self.program_label.setText(f'{settings.APP_NAME} V{settings.APP_VER} by crazyproger1')
-        #
-        # for i, language in enumerate(self._get_langs()):
-        #     self.language_selecting.setItemText(i, language)
-        #
-        # self.language_label.setText(pack.translate('labels.language'))
+        for i, lang in enumerate(Languages.select()):
+            self.language_selecting.setItemText(i, lang.full_name)
+
+        self.language_label.setText(_('Languages', language=curr_lang))

@@ -13,11 +13,11 @@ PC-Alarm is an application that will help you detect someone else presence on yo
     - [ ] English
     - [ ] Ukrainian
 
-- [ ] Pages
+- [x] Pages
     - [x] Main
     - [x] Settings
     - [x] Interactive Actions
-    - [ ] L18N Settings
+    - [x] L18N Settings
 
 - [ ] Interactive Actions / Commands
     - [x] Shutdown PC
