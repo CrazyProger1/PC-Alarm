@@ -20,6 +20,7 @@ class BasePage(Page):
     def __init__(self, *args, **kwargs):
         super(BasePage, self).__init__(*args, **kwargs)
         self.add_callback(events.INIT, self.on_initialize)
+        self.add_callback(events.DESTROY, self.on_destroy)
 
         # MainReplyKeyboard().add_callback(events.BUTTON_CLICKED, self.on_button_clicked)  # only for MainReplyKeyboard
         self.add_callback(events.BUTTON_CLICKED, self.on_button_clicked)  # for all keyboards
@@ -32,6 +33,9 @@ class BasePage(Page):
 
     async def on_initialize(self, user: Users, **kwargs):
         await self.keyboards[0].show(user)
+
+    async def on_destroy(self, user: Users, **kwargs):
+        await self.keyboards[0].hide(user)
 
     async def on_button_clicked(self, keyboard: Keyboard, button: str, user: Users, message: types.Message, **kwargs):
         if button == 'Back':
@@ -181,8 +185,15 @@ class LanguagePage(BasePage):
 
     def __init__(self, *args, **kwargs):
         super(LanguagePage, self).__init__(*args, **kwargs)
-        self.add_callback(events.INIT, self.on_initialize)
+        self.add_callback(events.CALLBACK, self.on_callback)
 
     async def on_initialize(self, user: Users, **kwargs):
         await super(LanguagePage, self).on_initialize(user, **kwargs)
         await self.show_keyboard(user, LanguageSelectingInlineKeyboard)
+
+    async def on_destroy(self, user: Users, **kwargs):
+        await super(LanguagePage, self).on_destroy(user, **kwargs)
+        await self.hide_keyboard(user, LanguageSelectingInlineKeyboard)
+
+    async def on_callback(self, callback: types.CallbackQuery, user: Users, **kwargs):
+        await self.execute_command('set', 'language', callback.data, user=user, message=None)

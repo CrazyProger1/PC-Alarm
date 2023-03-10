@@ -10,7 +10,7 @@ class Sender(metaclass=cls.SingletonMeta):
     def __init__(self, bot: aiogram.Bot = None):
         self.bot = bot
 
-    async def send_message(self, user: Users, text: str, **kwargs) -> types.Message:
+    async def send_message(self, user: Users, text: str = '', **kwargs) -> types.Message:
         return await self.bot.send_message(
             user.id,
             text,

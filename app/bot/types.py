@@ -81,8 +81,12 @@ class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
     def __init__(self, bot: aiogram.Bot):
         self.bot = bot
         self._active_for_users = []
-        self._sender = Sender()
+        self.sender = Sender()
         super(Keyboard, self).__init__()
+
+    @functools.cache
+    def get_caption(self, language: Languages):
+        return _(self.caption_key, language=language)
 
     @functools.cache
     def get_button_keys(self) -> tuple[str]:
@@ -133,9 +137,6 @@ class Keyboard(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
 class ReplyKeyboard(Keyboard):
     row_width: int = 1
 
-    def __init__(self, *args, **kwargs):
-        super(ReplyKeyboard, self).__init__(*args, **kwargs)
-
     @functools.cache
     def get_buttons(self, language: Languages) -> list[list[types.KeyboardButton | types.InlineKeyboardButton]]:
         result, row = [], []
@@ -161,9 +162,9 @@ class ReplyKeyboard(Keyboard):
     async def show(self, user: Users):
         markup = self.get_markup(language=user.language)
         await super(ReplyKeyboard, self).show(user)
-        msg = await self._sender.send_message(
+        msg = await self.sender.send_message(
             user,
-            _(self.caption_key, user=user),
+            self.get_caption(language=user.language),
             reply_markup=markup
         )
         user.state.reply_keyboard_msg_id = msg.message_id
@@ -186,19 +187,62 @@ class ReplyKeyboard(Keyboard):
 
 
 class InlineKeyboard(Keyboard):
-    row_width: int
+    row_width: int = 1
+    callback_data_length: int = 30
 
-    def __init__(self, *args, **kwargs):
-        super(InlineKeyboard, self).__init__(*args, **kwargs)
+    @functools.cache
+    def get_buttons(self, language: Languages) -> list[list[types.KeyboardButton | types.InlineKeyboardButton]]:
+        result, row = [], []
+        for button_key in self.get_button_keys():
+            if len(row) == self.row_width:
+                result.append(row)
+                row = []
+
+            translated = self.get_button_text_translation(button_key, language=language)
+            row.append(types.InlineKeyboardButton(translated, callback_data=translated[:self.callback_data_length]))
+
+        if len(row) > 0:
+            result.append(row)
+        return result
+
+    @functools.cache
+    def get_markup(self, language: Languages) -> types.ReplyKeyboardMarkup | types.InlineKeyboardMarkup:
+        markup = types.InlineKeyboardMarkup(
+            row_width=self.row_width
+        )
+        for btn_row in self.get_buttons(language=language):
+            markup.add(*btn_row)
+        return markup
 
     async def show(self, user: Users):
+        markup = self.get_markup(language=user.language)
         await super(InlineKeyboard, self).show(user)
+        msg = await self.sender.send_message(
+            user,
+            self.get_caption(language=user.language),
+            reply_markup=markup
+        )
+        user.state.inline_keyboard_msg_id = msg.message_id
 
     async def hide(self, user: Users):
-        await super(InlineKeyboard, self).hide(user)
+        msgid = user.state.inline_keyboard_msg_id
+        if msgid:
+            await self.bot.delete_message(user.id, msgid)
+            await super(InlineKeyboard, self).hide(user)
 
-    async def check_pressed(self, *args, **kwargs):
-        pass
+    @functools.cache
+    def get_pressed(self, text: str, language: Languages) -> str | None:
+        return self.get_translation_key_pairs(language=language).get(text[:self.callback_data_length])
+
+    async def check_pressed(self, callback: types.CallbackQuery, user: Users, **kwargs):
+        button_key = self.get_pressed(callback.data, user.language)
+        if button_key:
+            await self._call(
+                events.BUTTON_CLICKED,
+                button=button_key,
+                user=user,
+                callback=callback
+            )
 
 
 class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):

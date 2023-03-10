@@ -1,3 +1,7 @@
+import functools
+
+from aiogram import types
+from app.database import Languages
 from .keys import *
 from .types import ReplyKeyboard, InlineKeyboard
 
@@ -83,4 +87,17 @@ class LanguagePageReplyKeyboard(ReplyKeyboard):
 
 
 class LanguageSelectingInlineKeyboard(InlineKeyboard):
-    pass
+    button_keys = (
+
+    )
+    row_width = 1
+    caption_key = LANGUAGE_SELECTING_INLINE_KEYBOARD_CAPTION_KEY
+
+    @functools.cache
+    def get_buttons(self, **kwargs) -> list[list[types.KeyboardButton | types.InlineKeyboardButton]]:
+        result = []
+        for language in Languages.select():
+            result.append([
+                types.InlineKeyboardButton(language.full_name, callback_data=language.short_name)
+            ])
+        return result

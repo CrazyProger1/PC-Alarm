@@ -14,7 +14,7 @@ from app.database import Users, Languages
 from app.utils import logging, threads, filesystem
 from app.utils.translator import _
 from app.bot.router import Router
-from app.bot.pages import SayPage, MusicPage, BeepPage
+from app.bot.pages import SayPage, MusicPage, BeepPage, LanguagePage
 
 
 class BaseCommandsExecutor(Executor):
@@ -188,3 +188,31 @@ class SoundCommandsExecutor(Executor):
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         await getattr(self, command.command)(command, user)
+
+
+class SetCommandExecutor(Executor):
+    commands = (
+        'set',
+    )
+
+    async def set_language(self, user: Users, language_id: str):
+        try:
+            user.language = Languages.get_by_id(language_id)
+            logging.logger.debug(f'User {user} changed language to {user.language.short_name}')
+            await self.sender.send_message(
+                user,
+                _('Language changed', user=user)
+            )
+        except Languages.DoesNotExist:
+            raise 'Wrong ID'
+
+    async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
+        if len(command.params) < 2:
+            raise
+
+        target = command.params[0]
+        value = command.params[1]
+
+        match target:
+            case 'language':
+                await self.set_language(user, value)
