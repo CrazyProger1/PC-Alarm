@@ -29,7 +29,7 @@ class Translator(metaclass=SingletonMeta):
                     logger.fatal(
                         f'No translations for {self._domain} domain in the {language.short_name} language!'
                         f' Note: add a translation for this domain or the program will not work')
-                    return
+                    continue
                 raise
 
     @functools.cache

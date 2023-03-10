@@ -39,7 +39,7 @@ class AlarmCommandsExecutor(Executor):
 
     async def turn_on_alarm(self):
         logging.logger.debug('Alarm turned on')
-        await self.sender.send_message_to_all(_('Alarm Turned ON'))
+        await self.sender.send_message_to_all('Alarm Turned ON')
         self._alarm_activated = True
 
         mouse_pos = pyautogui.position()
@@ -49,12 +49,12 @@ class AlarmCommandsExecutor(Executor):
             await asyncio.sleep(5)
             new_pos = pyautogui.position()
             if new_pos != mouse_pos:
-                await self.sender.send_message_to_all(_('ALARM'))
+                await self.sender.send_message_to_all('ALARM')
             mouse_pos = new_pos
 
     async def turn_off_alarm(self):
         logging.logger.debug('Alarm turned off')
-        await self.sender.send_message_to_all(_('Alarm Turned OFF'))
+        await self.sender.send_message_to_all('Alarm Turned OFF')
         self._alarm_activated = False
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
