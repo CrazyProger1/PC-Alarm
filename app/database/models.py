@@ -53,6 +53,11 @@ class Categories(Model):
 
     @staticmethod
     @functools.cache
+    def get_owner():
+        return Categories.get_by_id('Owner')
+
+    @staticmethod
+    @functools.cache
     def get_admin():
         return Categories.get_by_id('Admin')
 
@@ -75,3 +80,6 @@ class Users(Model):
 
     def is_banned(self):
         return self.category == Categories.get_banned()
+
+    def is_owner(self):
+        return self.category == Categories.get_owner()

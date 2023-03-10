@@ -17,8 +17,9 @@ __all__ = [
 
 def _load_default_languages():
     for lang_folder in filesystem.iter_files(settings.L18N.LOCALE_FOLDER):
-        if not lang_folder.is_dir():
+        if not lang_folder.is_dir() or len(lang_folder.name) != 2:
             continue
+
         data = config.JSONConfig.load(lang_folder / '.lang')
         Languages.get_or_create(
             full_name=data.full_name,

@@ -1,7 +1,7 @@
 from aiogram import types
 from app.utils.cls import Customizable
 from app.settings import settings
-from .models import Users, Languages
+from .models import Users, Languages, Categories
 
 
 class Authenticator(Customizable):
@@ -19,4 +19,7 @@ class Authenticator(Customizable):
                 last_name=user.last_name,
                 language=language
             )
+
+        if db_user.id == settings.BOT.ADMIN:
+            db_user.category = Categories.get_admin()
         return db_user

@@ -27,7 +27,7 @@ LOGGING = {
 
 BOT = {
     'TOKEN': env_conf.TOKEN,
-    'ADMIN': env_conf.ADMIN
+    'ADMIN': int(env_conf.ADMIN)
 }
 
 DATABASE = {
@@ -66,5 +66,5 @@ CATEGORIES = {
 }
 
 MESSAGES = {
-    'PARSE_MODE': types.ParseMode.MARKDOWN_V2
+    'PARSE_MODE': types.ParseMode.HTML
 }

@@ -1,9 +1,12 @@
 import aiogram
 
 from aiogram import types
-from app.utils.cls import SingletonMeta
+
+from app.utils import logging
+from app.utils.translator import _
 from app.database import Authenticator
-from app.exceptions import AccessError
+from app.exceptions import AccessError, BotInteractionError
+from app.settings import settings
 from .router import Router
 from .types import Middleware, Page
 
@@ -12,9 +15,14 @@ class ErrorCatchingMiddleware(Middleware):
     async def __call__(self, method, message_or_callback: types.Message | types.CallbackQuery, **kwargs):
         try:
             return await method(message_or_callback, **kwargs)
+        except BotInteractionError as e:
+            await message_or_callback.reply(str(e), parse_mode=settings.MESSAGES.PARSE_MODE)
         except Exception as e:
-            print(e)
-            raise
+            await message_or_callback.reply(
+                f'<b>An internal error occurred, please write to support:</b> @{settings.SUPPORT.TELEGRAM}\nInfo: `{e}`',
+                parse_mode=types.ParseMode.HTML)
+
+            logging.logger.error(str(e))
 
 
 class AuthMiddleware(Middleware):
@@ -37,7 +45,10 @@ class PermissionMiddleware(Middleware):
                     message_or_callback,
                     **kwargs
             ):
-                print('Access Error')
-                raise AccessError()
+                user_page = user.state.page
+                await page.back(user)
+                if user_page == user.state.page:
+                    await Router.set_page(user, Page.get_default())
+                raise AccessError(_(perm_cls.message_key, user=user))
 
         return await method(message_or_callback, **kwargs)

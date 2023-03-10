@@ -11,7 +11,7 @@ PC-Alarm is an application that will help you detect someone else presence on yo
 **Available languages:**
 
 - [x] Ukrainian
-- [x] Poland
+- [ ] Poland
 - [x] English
 
 ### Translation-Guide
@@ -36,8 +36,9 @@ Tutorials:
 
 - [x] Alarm (Main Goal)
 - [ ] L18N
-    - [ ] English
-    - [ ] Ukrainian
+    - [x] English
+    - [x] Ukrainian
+    - [ ] Poland
 
 - [x] Pages
     - [x] Main
@@ -45,7 +46,7 @@ Tutorials:
     - [x] Interactive Actions
     - [x] L18N Settings
 
-- [ ] Interactive Actions / Commands
+- [x] Interactive Actions / Commands
     - [x] Shutdown PC
     - [x] Restart PC
     - [x] End Session
@@ -62,4 +63,4 @@ Tutorials:
 
 ## License
 
-Safe is released under the MIT License. See the bundled [LICENSE](LICENSE) file for details.
+PC-Alarm is released under the MIT License. See the bundled [LICENSE](LICENSE) file for details.

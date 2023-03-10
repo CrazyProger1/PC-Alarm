@@ -5,7 +5,7 @@ from app.database import Users
 from app.utils import filesystem
 
 from .keyboards import *
-from .permissions import IsNotBanned
+from .permissions import *
 from .types import Page, Keyboard, Executor, Command
 
 
@@ -13,6 +13,7 @@ class BasePage(Page):
     path = 'base'
     permission_classes = (
         IsNotBanned,
+        IsOwnerOrAdmin
     )
 
     page_transfers: dict[str, str] = {}
@@ -21,9 +22,7 @@ class BasePage(Page):
         super(BasePage, self).__init__(*args, **kwargs)
         self.add_callback(events.INIT, self.on_initialize)
         self.add_callback(events.DESTROY, self.on_destroy)
-
-        # MainReplyKeyboard().add_callback(events.BUTTON_CLICKED, self.on_button_clicked)  # only for MainReplyKeyboard
-        self.add_callback(events.BUTTON_CLICKED, self.on_button_clicked)  # for all keyboards
+        self.add_callback(events.BUTTON_CLICKED, self.on_button_clicked)
 
     @staticmethod
     async def execute_command(text_command: str, *args, **kwargs):

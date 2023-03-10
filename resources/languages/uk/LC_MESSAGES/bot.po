@@ -31,15 +31,15 @@ msgstr "Сигналізація деактивована"
 
 # app\bot\executors.py
 msgid "Shutting down..."
-msgstr "Вимкнення комп'ютера..."
+msgstr "Вимкнення комп'ютера\.\.\."
 
 # app\bot\executors.py
 msgid "Restarting..."
-msgstr "Перезавантаження комп'ютера..."
+msgstr "Перезавантаження комп'ютера\.\.\."
 
 # app\bot\executors.py
 msgid "Ending session..."
-msgstr "Завершення сеансу..."
+msgstr "Завершення сеансу\.\.\."
 
 # app\bot\executors.py
 msgid "Said"
