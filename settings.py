@@ -14,7 +14,7 @@ DEBUG = True
 
 APP = {
     'NAME': 'PC-Alarm',
-    'VERSION': '0.0'
+    'VERSION': '0.1'
 }
 
 LOGGING = {

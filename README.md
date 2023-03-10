@@ -6,6 +6,32 @@
 
 PC-Alarm is an application that will help you detect someone else presence on your computer while you are away.
 
+## L18N
+
+**Available languages:**
+
+- [x] Ukrainian
+- [x] Poland
+- [x] English
+
+### Translation-Guide
+
+Firstly, you need to go to folder: [resources/languages/pot](resources/languages/pot). There you will
+find [.pot](https://en.wikipedia.org/wiki/Gettext) files.
+
+Each part of the application has its own [.pot](https://en.wikipedia.org/wiki/Gettext) template:
+
+- Configurator - [configurator.pot](resources/languages/pot/configurator.pot)
+- Bot - [bot.pot](resources/languages/pot/bot.pot)
+
+[.pot](https://en.wikipedia.org/wiki/Gettext) template files can be open with applications such as
+[Poedit](https://poedit.net/), [Localizely](https://localizely.com/), [Transifex](https://www.transifex.com/) and many
+others.
+
+Tutorials:
+
+- [Poedit](resources/docs/POEDIT.MD)
+
 ## TO-DO
 
 - [x] Alarm (Main Goal)
@@ -29,10 +55,10 @@ PC-Alarm is an application that will help you detect someone else presence on yo
     - [x] Photo
     - [x] Screenshot
 
-- [ ] Configurator
-    - [ ] TOKEN
-    - [ ] Admin Telegram-ID
-    - [ ] UI L18N
+- [x] Configurator
+    - [x] TOKEN
+    - [x] Admin Telegram-ID
+    - [x] UI L18N
 
 ## License
 
