@@ -6,7 +6,7 @@ from .types import Page
 
 
 class Router(metaclass=cls.SingletonMeta):
-    def __init__(self, bot: aiogram.Bot):
+    def __init__(self, bot: aiogram.Bot = None):
         self._bot = bot
         self._init_pages()
 

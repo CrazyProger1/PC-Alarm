@@ -3,13 +3,16 @@ import pyautogui
 import asyncio
 import random
 import cv2
+import pyttsx3
 
 from pathlib import Path
 from aiogram import types
 from app.bot.types import Executor, Command
-from app.database import Users
+from app.database import Users, Languages
 from app.utils import logging, threads
 from app.utils.translator import _
+from app.bot.router import Router
+from app.bot.pages import SayPage
 
 
 class BaseCommandsExecutor(Executor):
@@ -115,12 +118,32 @@ class SoundCommandsExecutor(Executor):
         'say'
     )
 
+    def __init__(self, *args, **kwargs):
+        super(SoundCommandsExecutor, self).__init__(*args, **kwargs)
+        self.engine = pyttsx3.init()
+
+    def change_voice(self, language: Languages):
+        try:
+            for voice in self.engine.getProperty('voices'):
+                voice_lang = voice.name.split('-')[1].strip()
+                shorted_name = voice_lang[:2].lower()
+
+                if language.short_name == shorted_name:
+                    self.engine.setProperty('voice', voice.id)
+                    return True
+        except:
+            pass
+
     async def say(self, command: Command, user: Users):
         try:
             text = command.params[0]
         except IndexError:
-            raise
-        print(text)
+            router = Router()
+            await router.set_page(user, SayPage.path)
+            return
+        self.change_voice(user.language)
+        self.engine.say(text)
+        self.engine.runAndWait()
 
     async def execute(self, command: Command, message: types.Message, user: Users, **kwargs):
         await getattr(self, command.command)(command, user)
