@@ -1,7 +1,4 @@
-from aiogram import types
-
 from app.bot import events
-from app.database import Users
 from app.utils import filesystem
 
 from .keyboards import *
@@ -214,4 +211,6 @@ class OwnerAddingPage(BasePage):
         self.add_callback(events.MESSAGE, self.on_message)
 
     async def on_message(self, message: types.Message, user: Users, **kwargs):
+        if message.text == 'Back':
+            return
         await self.execute_command('add_owner', message.text, user=user, message=message)

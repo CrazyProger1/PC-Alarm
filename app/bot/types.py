@@ -9,7 +9,7 @@ from aiogram import types
 from app.bot import events, enums
 from app.database import Users, Languages
 from app.settings import settings
-from app.utils import cls as cls_tools, string, event
+from app.utils import cls as cls_tools, string, event, logging
 from app.utils.translator import _
 
 from .sender import Sender
@@ -40,7 +40,7 @@ class Permission(metaclass=cls_tools.SingletonMeta):
 @dataclass
 class Command:
     command: str
-    params: tuple
+    args: tuple
 
 
 class Parser(cls_tools.Customizable, metaclass=cls_tools.SingletonMeta):
@@ -332,6 +332,8 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
         command = self._command_parser.parse(
             message=message
         )
+        logging.logger.debug(f'Command got: {command}')
+
         executor = Executor.get(command)
 
         if executor:

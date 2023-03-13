@@ -39,6 +39,7 @@ class Translator(metaclass=SingletonMeta):
             user: Users = None,
             language: Languages = None
     ) -> str:
+
         if not language and user:
             language = user.language
 

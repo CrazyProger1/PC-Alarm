@@ -49,6 +49,6 @@ class PermissionMiddleware(Middleware):
                 await page.back(user)
                 if user_page == user.state.page:
                     await Router.set_page(user, Page.get_default())
-                raise AccessError(_(perm_cls.message_key, user=user))
+                raise AccessError(user, _(perm_cls.message_key, user=user))
 
         return await method(message_or_callback, **kwargs)
