@@ -172,7 +172,11 @@ class ReplyKeyboard(Keyboard):
     async def hide(self, user: Users):
         msgid = user.state.reply_keyboard_msg_id
         if msgid:
-            await self.bot.delete_message(user.id, msgid)
+            try:
+                await self.bot.delete_message(user.id, msgid)
+            except aiogram.utils.exceptions.MessageToDeleteNotFound:
+                pass
+
             await super(ReplyKeyboard, self).hide(user)
 
     async def check_pressed(self, message: types.Message, user: Users, **kwargs):
@@ -227,7 +231,10 @@ class InlineKeyboard(Keyboard):
     async def hide(self, user: Users):
         msgid = user.state.inline_keyboard_msg_id
         if msgid:
-            await self.bot.delete_message(user.id, msgid)
+            try:
+                await self.bot.delete_message(user.id, msgid)
+            except aiogram.utils.exceptions.MessageToDeleteNotFound:
+                pass
             await super(InlineKeyboard, self).hide(user)
 
     @functools.cache

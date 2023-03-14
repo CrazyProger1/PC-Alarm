@@ -29,8 +29,8 @@ msgstr "Токен:"
 msgid "Admin Telegram-ID:"
 msgstr "Telegram-ID адміна:"
 
-msgid "Languages"
-msgstr "Мова"
+msgid "Languages:"
+msgstr "Мова:"
 
 msgid "{0} V{1} by crazyproger1"
 msgstr "{0} V{1} зробив crazyproger1"

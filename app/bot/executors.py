@@ -231,6 +231,7 @@ class SetCommandExecutor(Executor):
                 user,
                 _('Language changed', user=user)
             )
+            await Router.reload_page(user)
         except Languages.DoesNotExist:
             raise BotInteractionError(user, _('This language is not available yet', user=user))
 

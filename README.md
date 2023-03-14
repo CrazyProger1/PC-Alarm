@@ -11,7 +11,6 @@ PC-Alarm is an application that will help you detect someone else presence on yo
 **Available languages:**
 
 - [x] Ukrainian
-- [ ] Poland
 - [x] English
 
 ### Translation-Guide
@@ -35,10 +34,9 @@ Tutorials:
 ## TO-DO
 
 - [x] Alarm (Main Goal)
-- [ ] L18N
+- [x] L18N
     - [x] English
     - [x] Ukrainian
-    - [ ] Poland
 
 - [x] Pages
     - [x] Main

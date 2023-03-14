@@ -129,7 +129,7 @@ class SayPage(BasePage):
         self.add_callback(events.MESSAGE, self.on_message)
 
     async def on_message(self, message: types.Message, user: Users, **kwargs):
-        if message.text == 'Back':
+        if self.keyboards[0].get_pressed(message.text, user.language) == 'Back':
             return
         await self.execute_command('say', message.text, message=message, user=user)
 
@@ -211,6 +211,6 @@ class OwnerAddingPage(BasePage):
         self.add_callback(events.MESSAGE, self.on_message)
 
     async def on_message(self, message: types.Message, user: Users, **kwargs):
-        if message.text == 'Back':
+        if self.keyboards[0].get_pressed(message.text, user.language) == 'Back':
             return
         await self.execute_command('add_owner', message.text, user=user, message=message)

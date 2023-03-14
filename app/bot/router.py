@@ -27,7 +27,7 @@ class Router(metaclass=cls.SingletonMeta):
         return page
 
     @staticmethod
-    async def set_page(user: Users, page: str | Page | type[Page]):
+    async def set_page(user: Users, page: str | Page | type[Page], reload: bool = False):
         old_page: Page = user.state.page
         new_page: Page | None = None
 
@@ -41,12 +41,20 @@ class Router(metaclass=cls.SingletonMeta):
         if not new_page:
             raise ValueError(f'Page not found: {page}')
 
-        if old_page != new_page:
+        if old_page != new_page or reload:
             if old_page:
                 await old_page.destroy(user)
             user.state.page = new_page
             await new_page.initialize(user)
-            logging.logger.debug(f'User {user} changed page to {new_page}')
+
+            if not reload:
+                logging.logger.debug(f'User {user} changed page to {new_page}')
+
+    @staticmethod
+    async def reload_page(user: Users):
+        curr_page = user.state.page
+        logging.logger.debug(f'Page {curr_page} reloaded for user {user}')
+        await Router.set_page(user, curr_page, reload=True)
 
     async def route_callback(self, *args, **kwargs):
         page = await self.get_page(kwargs.get('user'))
