@@ -172,6 +172,6 @@ QListWidget{
             ))
 
         for i, lang in enumerate(Languages.select()):
-            self.language_selecting.setItemText(i, lang.full_name)
+            self.language_selecting.setItemText(i, lang.full_name[:-2])
 
-        self.language_label.setText(_('Languages:', language=curr_lang))
+        self.language_label.setText(_('Language:', language=curr_lang))
