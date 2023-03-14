@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2023-03-13 14:25+0200\n"
-"PO-Revision-Date: 2023-03-14 12:46+0200\n"
+"PO-Revision-Date: 2023-03-14 13:42+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: uk\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 # app\bot\executors.py
 msgid "Welcome, {first_name}!"
-msgstr "Привіт, {first_name}❗️ Цей бот🤖 допоможе тобі контролювати твій ПК на відстані, а також, він може виконувати деякі корисні дії🛠"
+msgstr "Привіт, {first_name}❗️ Цей бот допоможе тобі контролювати твій ПК на відстані, а також, він може виконувати деякі корисні дії🛠"
 
 # app\bot\executors.py
 msgid "Said"
@@ -54,11 +54,11 @@ msgstr "Користувача додано до групи власників�
 
 # app\exceptions\bot.py
 msgid "Command arguments is missing: {args}"
-msgstr "Аргументи команди відсутні: {args}"
+msgstr "Аргументи команди відсутні: {args}❌"
 
 # app\exceptions\bot.py
 msgid "Target does not exists: {target}"
-msgstr "Змінної не існує: {target}"
+msgstr "Змінної не існує: {target}❌"
 
 # app\exceptions\bot.py
 msgid "File {path} does not exists!"

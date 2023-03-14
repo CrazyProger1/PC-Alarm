@@ -4,7 +4,6 @@ from app.utils.config import JSONConfig, ENVConfig
 FILES = {
     'JSON_CONFIG_FILE': 'config/config.json',
     'ENV_CONFIG_FILE': 'env/local.env',
-
 }
 
 json_conf = JSONConfig.load(FILES['JSON_CONFIG_FILE'])
@@ -35,7 +34,7 @@ DATABASE = {
     'PARAMS': {
         'database': env_conf.DB_FILE
     },
-    'AUTHENTICATOR_CLASS': 'custom.CustomAuthenticator'
+    'AUTHENTICATOR_CLASS': 'app.database.authenticator.Authenticator'
 }
 
 L18N = {

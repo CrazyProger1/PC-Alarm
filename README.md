@@ -4,7 +4,30 @@
 
 # PC-Alarm
 
-PC-Alarm is an application that will help you detect someone else presence on your computer while you are away.
+PC-Alarm is an application that will help you detect someone else presence on your computer while you are away. It based
+on Telegram API.
+
+## Installation
+
+## Configuration
+
+## Building
+
+**Note:** _Before starting, make sure you have installed [Python 3.11](https://www.python.org/downloads/)._
+
+Firstly, you need to clone this GIT repository:
+
+```shell
+git clone https://github.com/CrazyProger1/PC-Alarm
+```
+
+Then, install the requirements:
+
+```shell
+pip install -r requirements.txt
+```
+
+
 
 ## L18N
 
