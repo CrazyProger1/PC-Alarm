@@ -27,7 +27,17 @@ Then, install the requirements:
 pip install -r requirements.txt
 ```
 
+That's all, now you can start bot with the command:
 
+```shell
+python main.py
+```
+
+To start the configurator use the following command:
+
+```shell
+python main.py --configurator
+```
 
 ## L18N
 

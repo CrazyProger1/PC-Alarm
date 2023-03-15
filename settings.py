@@ -9,7 +9,7 @@ FILES = {
 json_conf = JSONConfig.load(FILES['JSON_CONFIG_FILE'])
 env_conf = ENVConfig.load(FILES['ENV_CONFIG_FILE'])
 
-DEBUG = True
+DEBUG = False
 
 APP = {
     'NAME': 'PC-Alarm',
