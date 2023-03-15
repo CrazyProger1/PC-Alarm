@@ -1,4 +1,7 @@
+import sys
+
 import aiogram
+import tkinter.messagebox
 
 from aiogram import types
 from app.settings import settings
@@ -13,6 +16,10 @@ from .enums import ContentType
 class App:
     def __init__(self):
         self._translator = translator.Translator(settings.L18N.BOT_DOMAIN)
+        if not settings.BOT.TOKEN or not settings.BOT.ADMIN:
+            tkinter.messagebox.showerror('PC-Alarm',
+                                         'Token or Admin-ID not specified! Run with --configurator option.')
+            sys.exit(-1)
         self._bot = aiogram.Bot(token=settings.BOT.TOKEN)
         self._dispatcher = aiogram.Dispatcher(bot=self._bot)
         self._middlewares = list(

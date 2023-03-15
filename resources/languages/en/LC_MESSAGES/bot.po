@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2023-03-13 14:25+0200\n"
+"PO-Revision-Date: 2023-03-14 13:42+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 3.2.2\n"
+
+msgid "Welcome, {first_name}!"
+msgstr "Hi, {first_name}❗️ This bot will help you to control your PC remotely, and it can perform some useful actions🛠"
+
+msgid "Said"
+msgstr "Said🗣"
+
+msgid "Played"
+msgstr "Played🎵"
+
+msgid "Wrong frequency value! It must be in the range from 37 to 32767"
+msgstr "Wrong frequency value❌ It must be in the range from 37 to 32767❗️"
+
+msgid "Beep played"
+msgstr "Beep played🔊"
+
+msgid "Language changed"
+msgstr "Language changed💬"
+
+msgid "This language is not available yet"
+msgstr "This language is not available yet❌"
+
+msgid "This user is not in the database"
+msgstr "The user is not found in the database, they should first write to the bot for registration🧑‍💻"
+
+msgid "The user has been added to the owners group"
+msgstr "The user has been added to the owners group🔗"
+
+msgid "Command arguments is missing: {args}"
+msgstr "Command arguments are missing: {args}❌"
+
+msgid "Target does not exists: {target}"
+msgstr "The variable does not exist: {target}❌"
+
+msgid "File {path} does not exists!"
+msgstr "File {path} does not exist❗️"
+
+msgid "Alarm Turned ON"
+msgstr "Alarm activated🔔"
+
+msgid "ALARM"
+msgstr "🚨ALARM🚨"
+
+msgid "Alarm Turned OFF"
+msgstr "Alarm deactivated🔕"
+
+msgid "Shutting down..."
+msgstr "Shutting down the computer🛑..."
+
+msgid "Restarting..."
+msgstr "Restarting the computer🔃..."
+
+msgid "Ending session..."
+msgstr "Ending the session🔑..."
+
+msgid "Main menu"
+msgstr "Main menu📎"
+
+msgid "Settings"
+msgstr "Settings⚙️"
+
+msgid "Interactive Actions"
+msgstr "Actions🛠"
+
+msgid "Send me a text and I will say it on the target machine"
+msgstr "Send me a text message, and I will say it on the target machine🗣"
+
+msgid "Send me music or voice message and I will play it on the target machine"
+msgstr "Send me music or a voice message, and I will play it on the target machine🎵"
+
+msgid "Choose the beep frequency or send custom"
+msgstr "Choose the beep frequency or send a custom number (from 37 to 32767)🔊"
+
+msgid "Language Settings"
+msgstr "Language settings💬"
+
+msgid "Choose Language"
+msgstr "Choose Language💬"
+
+msgid "Add Owner"
+msgstr "Add Owner🧑‍💻"
+
+msgid "Turn ON Alarm"
+msgstr "Activate alarm🔔"
+
+msgid "Turn OFF Alarm"
+msgstr "Deactivate alarm🔕"
+
+msgid "Make Photo"
+msgstr "Take a photo📸"
+
+msgid "Make Screenshot"
+msgstr "Take a screenshot🖥"
+
+msgid "Interaction"
+msgstr "Interaction🛠"
+
+msgid "Shutdown PC"
+msgstr "Turn off PC🛑"
+
+msgid "Restart PC"
+msgstr "Restart PC🔃"
+
+msgid "End Session"
+msgstr "End session🔑"
+
+msgid "Say"
+msgstr "Say🗣"
+
+msgid "Music"
+msgstr "Music🎵"
+
+msgid "Beep"
+msgstr "Beep🔊"
+
+msgid "Back"
+msgstr "Back⬅️"
+
+msgid "Language"
+msgstr "Language💬"
+
+msgid "Enter the @username"
+msgstr "Enter the @username🧑‍💻"

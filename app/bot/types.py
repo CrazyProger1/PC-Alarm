@@ -9,7 +9,7 @@ from aiogram import types
 from app.bot import events, enums
 from app.database import Users, Languages
 from app.settings import settings
-from app.utils import cls as cls_tools, string, event
+from app.utils import cls as cls_tools, string, event, logging
 from app.utils.translator import _
 
 from .sender import Sender
@@ -40,7 +40,7 @@ class Permission(metaclass=cls_tools.SingletonMeta):
 @dataclass
 class Command:
     command: str
-    params: tuple
+    args: tuple
 
 
 class Parser(cls_tools.Customizable, metaclass=cls_tools.SingletonMeta):
@@ -172,7 +172,11 @@ class ReplyKeyboard(Keyboard):
     async def hide(self, user: Users):
         msgid = user.state.reply_keyboard_msg_id
         if msgid:
-            await self.bot.delete_message(user.id, msgid)
+            try:
+                await self.bot.delete_message(user.id, msgid)
+            except aiogram.utils.exceptions.MessageToDeleteNotFound:
+                pass
+
             await super(ReplyKeyboard, self).hide(user)
 
     async def check_pressed(self, message: types.Message, user: Users, **kwargs):
@@ -227,7 +231,10 @@ class InlineKeyboard(Keyboard):
     async def hide(self, user: Users):
         msgid = user.state.inline_keyboard_msg_id
         if msgid:
-            await self.bot.delete_message(user.id, msgid)
+            try:
+                await self.bot.delete_message(user.id, msgid)
+            except aiogram.utils.exceptions.MessageToDeleteNotFound:
+                pass
             await super(InlineKeyboard, self).hide(user)
 
     @functools.cache
@@ -332,6 +339,8 @@ class Page(event.EventEmitter, metaclass=cls_tools.SingletonMeta):
         command = self._command_parser.parse(
             message=message
         )
+        logging.logger.debug(f'Command got: {command}')
+
         executor = Executor.get(command)
 
         if executor:

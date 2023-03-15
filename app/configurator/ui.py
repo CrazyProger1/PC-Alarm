@@ -82,6 +82,7 @@ QListWidget{
         self.setObjectName("MainWindow")
         self.setAutoFillBackground(False)
         self.setStyleSheet(self.WINDOW_STYLE)
+        self.setWindowIcon(QtGui.QIcon('resources/icons/base.ico'))
 
         self.resize(*self.WINDOW_SIZE)
 
@@ -141,7 +142,7 @@ QListWidget{
 
     def _on_language_changed(self):
         lang_short_name = self._get_selected_language().short_name
-        logging.logger.debug(f'Language {lang_short_name} selected')
+        logging.logger.debug(f'Language selected: {lang_short_name}')
         settings.L18N.UI_LANGUAGE = lang_short_name
         self._retranslate_ui()
 
@@ -172,6 +173,6 @@ QListWidget{
             ))
 
         for i, lang in enumerate(Languages.select()):
-            self.language_selecting.setItemText(i, lang.full_name)
+            self.language_selecting.setItemText(i, lang.full_name[:-2])
 
-        self.language_label.setText(_('Languages', language=curr_lang))
+        self.language_label.setText(_('Language:', language=curr_lang))

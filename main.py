@@ -1,4 +1,5 @@
 import argparse
+import settings
 
 from app.utils.logging import *
 from app.settings import settings
@@ -52,3 +53,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

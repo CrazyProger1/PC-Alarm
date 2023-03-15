@@ -1,0 +1,1 @@
+pyinstaller -w -i "resources/icons/base.ico" --copy-metadata magic_filter --noconfirm --add-data "config;config" --add-data "resources;resources" --add-data "env;env"  main.py

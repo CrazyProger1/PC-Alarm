@@ -38,5 +38,5 @@ _stream_handler = logging.StreamHandler()
 _stream_handler.setLevel(settings.LOGGING.LEVEL)
 
 _stream_handler.setFormatter(_Formatter(settings.LOGGING.FORMAT))
-
-logger.addHandler(_stream_handler)
+if settings.LOGGING.PRINT_LOG:
+    logger.addHandler(_stream_handler)

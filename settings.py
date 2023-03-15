@@ -4,17 +4,16 @@ from app.utils.config import JSONConfig, ENVConfig
 FILES = {
     'JSON_CONFIG_FILE': 'config/config.json',
     'ENV_CONFIG_FILE': 'env/local.env',
-
 }
 
 json_conf = JSONConfig.load(FILES['JSON_CONFIG_FILE'])
 env_conf = ENVConfig.load(FILES['ENV_CONFIG_FILE'])
 
-DEBUG = True
+DEBUG = False
 
 APP = {
     'NAME': 'PC-Alarm',
-    'VERSION': '0.0'
+    'VERSION': '0.1'
 }
 
 LOGGING = {
@@ -27,7 +26,7 @@ LOGGING = {
 
 BOT = {
     'TOKEN': env_conf.TOKEN,
-    'ADMIN': env_conf.ADMIN
+    'ADMIN': int(env_conf.ADMIN) if env_conf.ADMIN else 0
 }
 
 DATABASE = {
@@ -35,7 +34,7 @@ DATABASE = {
     'PARAMS': {
         'database': env_conf.DB_FILE
     },
-    'AUTHENTICATOR_CLASS': 'custom.CustomAuthenticator'
+    'AUTHENTICATOR_CLASS': 'app.database.authenticator.Authenticator'
 }
 
 L18N = {
@@ -66,5 +65,5 @@ CATEGORIES = {
 }
 
 MESSAGES = {
-    'PARSE_MODE': types.ParseMode.MARKDOWN_V2
+    'PARSE_MODE': types.ParseMode.HTML
 }
