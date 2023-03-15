@@ -4,6 +4,10 @@
 
 # PC-Alarm
 
+<a href="https://github.com/CrazyProger1/PC-Alarm/releases/download/v0.1/PC-Alarm-buildV0.1.exe"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/CrazyProger1/PC-Alarm/total"></a>
+<a href="https://github.com/CrazyProger1/PC-Alarm/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/CrazyProger1/PC-Alarm"></a>
+<a href="https://github.com/CrazyProger1/PC-Alarm/releases/latest"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/CrazyProger1/PC-Alarm"></a>
+
 PC-Alarm is an application that will help you detect someone else presence on your computer while you are away. It based
 on Telegram API.
 
@@ -84,18 +88,12 @@ Tutorials:
 
 - [Poedit](resources/docs/POEDIT.MD)
 
-## TO-DO
+## Functionality
 
 - [x] Alarm (Main Goal)
 - [x] L18N
     - [x] English
     - [x] Ukrainian
-
-- [x] Pages
-    - [x] Main
-    - [x] Settings
-    - [x] Interactive Actions
-    - [x] L18N Settings
 
 - [x] Interactive Actions / Commands
     - [x] Shutdown PC
@@ -108,7 +106,7 @@ Tutorials:
     - [x] Screenshot
 
 - [x] Configurator
-    - [x] TOKEN
+    - [x] Changing Bot Token
     - [x] Admin Telegram-ID
     - [x] UI L18N
 
