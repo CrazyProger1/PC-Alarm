@@ -82,6 +82,7 @@ QListWidget{
         self.setObjectName("MainWindow")
         self.setAutoFillBackground(False)
         self.setStyleSheet(self.WINDOW_STYLE)
+        self.setWindowIcon(QtGui.QIcon('resources/icons/base.ico'))
 
         self.resize(*self.WINDOW_SIZE)
 

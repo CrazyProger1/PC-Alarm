@@ -11,7 +11,7 @@ on Telegram API.
 
 ## Configuration
 
-## Building
+## Development
 
 **Note:** _Before starting, make sure you have installed [Python 3.11](https://www.python.org/downloads/)._
 
@@ -38,6 +38,26 @@ To start the configurator use the following command:
 ```shell
 python main.py --configurator
 ```
+
+## Building
+
+**Note:** _Make sure you have installed [PyInstaller](https://pypi.org/project/pyinstaller/)._
+
+To build, execute the following command from base folder:
+
+```commandline
+"scripts/build.bat"
+```
+
+On Windows.
+
+```bash
+sh ./scripts/build.sh
+```
+
+On Linux.
+
+Now, you can find an executable file at [dist/main](dist/main).
 
 ## L18N
 
