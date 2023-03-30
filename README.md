@@ -13,7 +13,11 @@ on Telegram API.
 
 ## Installation
 
+#**In development**
+
 ## Configuration
+
+#**In development**
 
 ## Development
 
