@@ -4,7 +4,7 @@
 
 # PC-Alarm
 
-<a href="https://github.com/CrazyProger1/PC-Alarm/releases/download/v0.1/PC-Alarm-buildV0.1.exe"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/CrazyProger1/PC-Alarm/total"></a>
+<a href="https://github.com/CrazyProger1/PC-Alarm/releases/download/V0.1/PC-Alarm-buildV0.1.exe"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/CrazyProger1/PC-Alarm/total"></a>
 <a href="https://github.com/CrazyProger1/PC-Alarm/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/CrazyProger1/PC-Alarm"></a>
 <a href="https://github.com/CrazyProger1/PC-Alarm/releases/latest"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/CrazyProger1/PC-Alarm"></a>
 
