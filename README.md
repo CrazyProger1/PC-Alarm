@@ -8,8 +8,28 @@
 <a href="https://github.com/CrazyProger1/PC-Alarm/blob/master/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/CrazyProger1/PC-Alarm"></a>
 <a href="https://github.com/CrazyProger1/PC-Alarm/releases/latest"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/CrazyProger1/PC-Alarm"></a>
 
-PC-Alarm is an application that will help you detect someone else presence on your computer while you are away. It based
-on Telegram API.
+Introducing PC-Alarm, the ultimate application that ensures your computer is safe and secure even when you're not
+around! With PC-Alarm, you can detect if someone else is using your computer while you're away, giving you peace of mind
+and added security for your valuable data and privacy.
+
+PC-Alarm is built on Telegram API, providing you with a reliable and secure platform to monitor and control your
+computer remotely. The alarm function of PC-Alarm sends you instant notifications on your smartphone or other devices if
+someone starts using your computer. You'll be alerted in real-time, allowing you to take immediate action to protect
+your data and privacy.
+
+But that's not all! PC-Alarm offers a wide range of additional features that allow you to control your computer from a
+distance. With PC-Alarm, you can remotely lock or unlock your computer, shut it down, restart it, or put it to sleep.
+
+PC-Alarm is incredibly user-friendly and easy to set up. It runs seamlessly in the background, constantly monitoring
+your computer for mouse use.
+
+Whether you're at work, traveling, or simply away from your computer, PC-Alarm has got you covered. It's the perfect
+solution for safeguarding your computer and maintaining control even when you're not physically present.
+
+Don't leave your computer's security to chance. Get PC-Alarm today and gain peace of mind knowing that your computer is
+protected 24/7. Download PC-Alarm now and take control of your computer's security like never before!
+
+**Note:** _Description created by ChatGPT._ 😂
 
 ## Overview
 
@@ -39,7 +59,6 @@ After installation, you will see 2 shortcuts on your desktop:
 The first one (_PC-Alarm-Configurator.exe_) launches the configurator, the second - the whole program.
 
 **Note:** _The program is automatically added to startup._
-
 
 ## Configuration
 
