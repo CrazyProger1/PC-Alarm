@@ -21,7 +21,7 @@ But that's not all! PC-Alarm offers a wide range of additional features that all
 distance. With PC-Alarm, you can remotely lock or unlock your computer, shut it down, restart it, or put it to sleep.
 
 PC-Alarm is incredibly user-friendly and easy to set up. It runs seamlessly in the background, constantly monitoring
-your computer for any unauthorized use.
+your computer for mouse use.
 
 Whether you're at work, traveling, or simply away from your computer, PC-Alarm has got you covered. It's the perfect
 solution for safeguarding your computer and maintaining control even when you're not physically present.
