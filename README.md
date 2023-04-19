@@ -11,9 +11,35 @@
 PC-Alarm is an application that will help you detect someone else presence on your computer while you are away. It based
 on Telegram API.
 
+## Overview
+
+![](resources/imgs/configurator.png)
+
+_Configurator window._
+
+![](resources/imgs/menu_1.png)
+
+_Main bot menu._
+
+![](resources/imgs/menu_2.png)
+
+_Some additional useful actions menu._
+
 ## Installation
 
-#**In development**
+The last version you can
+download [here](https://github.com/CrazyProger1/PC-Alarm/releases/download/V0.1/PC-Alarm-buildV0.1.exe).
+
+To install the program, run the downloaded installer and follow the instructions.
+
+After installation, you will see 2 shortcuts on your desktop:
+
+![](resources/imgs/shortcuts.png)
+
+The first one (_PC-Alarm-Configurator.exe_) launches the configurator, the second - the whole program.
+
+**Note:** _The program is automatically added to startup._
+
 
 ## Configuration
 
