@@ -1,5 +1,6 @@
 import asyncio
 
+from src.settings import FOR_BUILD
 from src.configurator import run_configurator
 
 

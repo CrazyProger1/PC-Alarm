@@ -18,3 +18,8 @@ test:
 build:
 	poetry run pyinstaller -F -w --name PC-Alarm --icon "resources/imgs/icons/base.ico" --add-data="resources;." src/__main__.py
 
+
+.PHONY: build-debug
+build-debug:
+	poetry run pyinstaller -F --name PC-Alarm-Debug --icon "resources/imgs/icons/base.ico" --add-data="resources;." src/__main__.py
+

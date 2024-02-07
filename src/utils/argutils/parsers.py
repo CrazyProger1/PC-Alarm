@@ -4,9 +4,11 @@ from typing import Container, Sequence
 from enum import Enum
 
 from pydantic import BaseModel
+from typeguard import typechecked
 
 
 class SchemedArgumentParser(argparse.ArgumentParser):
+    @typechecked
     def __init__(
             self,
             schema: type[BaseModel],

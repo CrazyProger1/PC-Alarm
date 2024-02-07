@@ -5,8 +5,11 @@ import sys
 from functools import cache
 from types import ModuleType
 
+from typeguard import typechecked
+
 
 @cache
+@typechecked
 def import_module(path: str, sep='.') -> ModuleType:
     try:
         components = path.split(sep)
@@ -19,6 +22,7 @@ def import_module(path: str, sep='.') -> ModuleType:
 
 
 @cache
+@typechecked
 def import_module_by_filepath(path: str) -> ModuleType:
     directory = os.path.dirname(path)
     sys.path.append(directory)
@@ -37,6 +41,7 @@ def import_module_by_filepath(path: str) -> ModuleType:
 
 
 @cache
+@typechecked
 def import_class_by_filepath(path: str, class_name: str, base_class: type = object) -> type:
     module = import_module_by_filepath(path)
     imported_class = getattr(module, class_name, None)

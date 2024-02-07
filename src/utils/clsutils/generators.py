@@ -1,7 +1,10 @@
 import gc
 from typing import Generator
 
+from typeguard import typechecked
 
+
+@typechecked
 def iter_subclasses(cls: type, max_level: int = -1) -> Generator:
     if max_level == 0:
         return
@@ -12,6 +15,7 @@ def iter_subclasses(cls: type, max_level: int = -1) -> Generator:
             yield subsubcls
 
 
+@typechecked
 def iter_instances(cls: type, precise: bool = True) -> Generator:
     for instance in gc.get_objects():
         if isinstance(instance, cls):
