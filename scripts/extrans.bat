@@ -1,1 +1,0 @@
-python ./scripts/extrans.py -i resources config env -v -l -o "base.pot" ./
