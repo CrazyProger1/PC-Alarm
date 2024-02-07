@@ -8,7 +8,7 @@ from src.utils.i18n import (
 
 gettext.bindtextdomain('main', 'tests/resources/i18n/')
 gettext.textdomain('main')
-os.environ['LANG'] = 'en_US'
+os.environ['LANG'] = 'en'
 
 
 class FirstTranslatableEnum(TranslatableEnum):
