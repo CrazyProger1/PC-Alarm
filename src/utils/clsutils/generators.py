@@ -12,7 +12,11 @@ def iter_subclasses(cls: type, max_level: int = -1) -> Generator:
             yield subsubcls
 
 
-def iter_instances(cls: type) -> Generator:
+def iter_instances(cls: type, precise: bool = True) -> Generator:
     for instance in gc.get_objects():
         if isinstance(instance, cls):
-            yield instance
+            instance_cls = instance.__class__
+            if not precise:
+                yield instance
+            elif instance_cls == cls:
+                yield instance
