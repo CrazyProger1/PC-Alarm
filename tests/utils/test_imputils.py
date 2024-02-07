@@ -1,6 +1,7 @@
 import inspect
-import os.path
 from types import ModuleType
+
+import pytest
 
 from src.utils.imputils import (
     import_module_by_filepath,
@@ -22,3 +23,8 @@ def test_import_class_by_filepath():
     )
 
     assert inspect.isclass(cls)
+
+
+def test_import_unexisting_module_by_filepath():
+    with pytest.raises(ImportError):
+        import_module_by_filepath('nothing')

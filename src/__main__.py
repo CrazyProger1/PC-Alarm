@@ -1,8 +1,10 @@
 import asyncio
 
+from src.configurator import run_configurator
+
 
 async def main():
-    pass
+    await run_configurator()
 
 
 if __name__ == '__main__':

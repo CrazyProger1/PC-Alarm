@@ -1,5 +1,12 @@
-def run_configurator():
-    pass
+import flet as ft
+
+from .gui import gui
+
+
+async def run_configurator():
+    await ft.app_async(
+        target=gui
+    )
 
 
 __all__ = [
