@@ -32,14 +32,17 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12,<3.13"
 aiogram = "^3.3.0"
 peewee = "^3.17.1"
+flet = "^0.19.0"
+
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.1"
 mypy = "^1.8.0"
 pytest = "^8.0.0"
+pyinstaller = "^6.3.0"
 
 [build-system]
 requires = ["poetry-core"]

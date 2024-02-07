@@ -11,3 +11,9 @@ extract-translations:
 .PHONY: test
 test:
 	poetry run python -m pytest tests/
+
+
+
+.PHONY: build
+build:
+	poetry run pyinstaller -F -w --name PC-Alarm --icon "resources/imgs/icons/base.ico" --add-data="resources;." src/__main__.py
