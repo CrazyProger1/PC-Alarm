@@ -1,9 +1,0 @@
-[database]
-file = "db.sqlite3"
-
-[bot]
-bot_token = "123321ASdDAS"
-admin_id = 123123
-
-[configurator]
-language = "en"

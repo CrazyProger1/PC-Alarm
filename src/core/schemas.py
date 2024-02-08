@@ -17,9 +17,13 @@ class DatabaseSettings(BaseSettings):
     file: str = Field(DEFAULT_DATABASE_FILE)
 
 
-class BotSettings(BaseSettings):
+class SensitiveSettings(BaseSettings):
     bot_token: str = Field(env='BOT_TOKEN')
     admin_id: int = Field(env='ADMIN_ID')
+
+
+class BotSettings(BaseSettings):
+    pass
 
 
 class ConfiguratorSettings(BaseSettings):
@@ -30,3 +34,4 @@ class Settings(BaseSettings):
     database: DatabaseSettings = DatabaseSettings()
     bot: BotSettings = BotSettings()
     configurator: ConfiguratorSettings = ConfiguratorSettings()
+    credentials: SensitiveSettings = SensitiveSettings()

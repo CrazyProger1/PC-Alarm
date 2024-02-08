@@ -1,4 +1,5 @@
 import asyncio
+from typing import Iterable
 
 import toml
 from pydantic import BaseModel
@@ -40,10 +41,13 @@ def load_settings(file: str, schema: type[BaseModel]) -> BaseModel:
 
 
 @typechecked
-def save_settings(file: str, settings: BaseModel):
+def save_settings(file: str, settings: BaseModel, ignore_fields: Iterable = ()):
     try:
         with open(file, 'w', encoding='utf-8') as f:
-            toml.dump(settings.model_dump(), f)
+            data: dict = settings.model_dump()
+            for field in ignore_fields:
+                data.pop(field)
+            toml.dump(data, f)
     except Exception as e:
         save_settings(DEFAULT_SETTINGS_FILE, settings)
 
@@ -72,7 +76,11 @@ async def main():
                 settings=settings
             )
 
-    save_settings(file=args.settings_file, settings=settings)
+    save_settings(
+        file=args.settings_file,
+        settings=settings,
+        ignore_fields=('credentials',)
+    )
     logger.info(f'{APP} terminated')
 
 
