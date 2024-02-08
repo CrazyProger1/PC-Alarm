@@ -1,3 +1,5 @@
+import logging
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,5 +21,13 @@ VERSION = '0.0.2'
 WINDOW_SIZE = (600, 400)
 TITLE = f'{APP} - v{VERSION}'
 
-# Core
-SETTINGS_DEFAULT_FILE = 'settings.toml'
+# Settings
+DEFAULT_SETTINGS_FILE = 'settings.toml'
+
+# Database
+DEFAULT_DATABASE_FILE = 'db.sqlite3'
+OWNER_GROUP = 'owner'
+ADMIN_GROUP = 'admin'
+
+# Logging
+LOGGING_LEVEL = logging.DEBUG

@@ -6,10 +6,6 @@ from src.utils.i18n import (
     TranslatableEnum
 )
 
-gettext.bindtextdomain('main', 'tests/resources/i18n/')
-gettext.textdomain('main')
-os.environ['LANG'] = 'en'
-
 
 class FirstTranslatableEnum(TranslatableEnum):
     TEST = 'test'
@@ -24,6 +20,10 @@ def test_extract_ids():
 
 
 def test_translatable_enum():
+    gettext.bindtextdomain('main', 'tests/resources/i18n/')
+    gettext.textdomain('main')
+    os.environ['LANG'] = 'en'
+
     assert FirstTranslatableEnum.TEST.value == gettext.gettext('test')
     assert FirstTranslatableEnum.ABC.value == gettext.gettext('abc')
     assert FirstTranslatableEnum.BBC.value == gettext.gettext('bbc')

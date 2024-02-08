@@ -1,5 +1,6 @@
 import argparse
 import inspect
+from abc import ABC, abstractmethod
 from typing import Container, Sequence
 from enum import Enum
 
@@ -7,7 +8,16 @@ from pydantic import BaseModel
 from typeguard import typechecked
 
 
-class SchemedArgumentParser(argparse.ArgumentParser):
+class BaseSchemedArgumentParser(argparse.ArgumentParser, ABC):
+    @abstractmethod
+    def parse_schemed_args(
+            self,
+            args: Sequence[str] | None = None,
+            namespace: argparse.Namespace | None = None
+    ) -> BaseModel: ...
+
+
+class SchemedArgumentParser(BaseSchemedArgumentParser):
     @typechecked
     def __init__(
             self,
@@ -18,7 +28,6 @@ class SchemedArgumentParser(argparse.ArgumentParser):
             short_aliases: dict[str, str] | None = None,
             **kwargs
     ):
-        assert issubclass(schema, BaseModel), f"Schema must be subclass of {BaseModel}"
 
         super(SchemedArgumentParser, self).__init__(**kwargs)
         self._schema = schema
@@ -94,7 +103,7 @@ class SchemedArgumentParser(argparse.ArgumentParser):
 
         if self._is_enum_field(field_type):
             kwargs.update({
-                'choices': list(map(lambda c: c, field_type))
+                'choices': list(map(lambda c: c.value, field_type))
             })
 
         self.add_argument(
@@ -106,16 +115,18 @@ class SchemedArgumentParser(argparse.ArgumentParser):
         fields = self._schema.model_fields
 
         for name, info in fields.items():
+            name = info.alias or name
             if name not in self._ignore_fields:
                 self._add_field_argument(
                     name=name,
                     info=info
                 )
 
+    @typechecked
     def parse_schemed_args(
             self,
-            args: Sequence[str] = None,
-            namespace: argparse.Namespace = None
+            args: Sequence[str] | None = None,
+            namespace: argparse.Namespace | None = None
     ) -> BaseModel:
         namespace = self.parse_args(args=args, namespace=namespace)
         return self._schema.model_validate(namespace.__dict__)

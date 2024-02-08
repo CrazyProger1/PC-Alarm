@@ -1,6 +1,10 @@
-.PHONY: run
-run:
-	poetry run python -m src
+.PHONY: run-bot
+run-bot:
+	poetry run python -m src -m bot
+
+.PHONY: run-configurator
+run-configurator:
+	poetry run python -m src -m configurator
 
 
 .PHONY: extract-translations

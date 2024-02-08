@@ -1,4 +1,4 @@
-def run_bot():
+async def run_bot(arguments, settings):
     pass
 
 
