@@ -41,25 +41,21 @@ class SchemedArgumentParser(BaseSchemedArgumentParser):
     def _is_enum(enum) -> bool:
         return inspect.isclass(enum) and issubclass(enum, Enum)
 
-    @staticmethod
-    def _build_argument_action(call: Callable):
-        return type(
-            'action',
-            (argparse.Action,),
-            {'__call__': call}
-        )
-
     def _is_positional_argument(self, name: str):
         return name in self._positional_arguments
-
 
     def _get_argument_type(self, field_info):
         field_type = field_info.annotation
 
-        if not self._is_enum(enum=field_type):
-            return field_type
+        if self._is_enum(field_type):
+            if issubclass(field_type, int):
+                return int
+            return str
+
+        return field_type
 
     def _add_field_argument(self, field_name: str, field_info):
+        field_type = field_info.annotation
         actual_name = field_info.alias or field_name
         short_name = self._short_aliases.get(
             field_name,
@@ -70,6 +66,7 @@ class SchemedArgumentParser(BaseSchemedArgumentParser):
         kwargs = {
             'default': field_info.default,
             'help': field_info.description,
+            'type': self._get_argument_type(field_info)
         }
 
         if self._is_positional_argument(name=actual_name):
@@ -79,6 +76,11 @@ class SchemedArgumentParser(BaseSchemedArgumentParser):
             args.append(actual_name)
         else:
             args.extend((f'-{short_name}', f'--{actual_name}'))
+
+        if self._is_enum(field_type):
+            kwargs.update({
+                'choices': tuple(map(lambda c: c.value, field_type))
+            })
 
         self.add_argument(
             *args,
