@@ -3,7 +3,8 @@ from enum import Enum
 import pytest
 from pydantic import (
     BaseModel,
-    Field
+    Field,
+    ValidationError
 )
 
 from src.utils.argutils import SchemedArgumentParser
@@ -87,7 +88,7 @@ def test_parse_positional_args():
     assert args.abc == '321'
 
 
-def test_parse_aliases():
+def test_parse_short_aliases():
     class Schema6(BaseModel):
         test: str
 
@@ -102,6 +103,18 @@ def test_parse_aliases():
     assert args.test == '4444'
 
 
+def test_parse_field_aliases():
+    class Schema7(BaseModel):
+        test: str = Field(alias='ttt')
+
+    parser = SchemedArgumentParser(
+        schema=Schema7
+    )
+
+    args = parser.parse_schemed_args(['--ttt', '4444'])
+    assert args.test == '4444'
+
+
 def test_parse_application_mode():
     parser = SchemedArgumentParser(
         schema=Arguments,
@@ -110,3 +123,17 @@ def test_parse_application_mode():
     args = parser.parse_schemed_args(['-m', 'bot'])
 
     assert args.mode == ApplicationWorkingMode.BOT
+
+
+def test_ignore_fields():
+    class Schema8(BaseModel):
+        test: str
+        abc: str
+
+    parser = SchemedArgumentParser(
+        schema=Schema8,
+        ignore_fields=('abc',)
+    )
+
+    with pytest.raises(ValidationError):
+        parser.parse_schemed_args(['--test', '4444'])

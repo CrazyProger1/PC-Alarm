@@ -5,7 +5,9 @@ from pydantic import BaseModel
 from typeguard import typechecked
 
 from src.settings import (
-    DEFAULT_SETTINGS_FILE
+    DEFAULT_SETTINGS_FILE,
+    APP,
+    DESCRIPTION
 )
 from src.configurator import run_configurator
 from src.bot import run_bot
@@ -46,7 +48,11 @@ def save_settings(file: str, settings: BaseModel):
 
 
 async def main():
-    args = parse_arguments(SchemedArgumentParser(schema=Arguments))
+    args = parse_arguments(SchemedArgumentParser(
+        schema=Arguments,
+        prog=APP,
+        description=DESCRIPTION
+    ))
     settings = load_settings(file=args.settings_file, schema=Settings)
 
     match args.mode:

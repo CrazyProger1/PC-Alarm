@@ -1,7 +1,7 @@
 import argparse
 import inspect
 from abc import ABC, abstractmethod
-from typing import Container, Sequence
+from typing import Container, Sequence, Callable
 from enum import Enum
 
 from pydantic import BaseModel
@@ -28,7 +28,6 @@ class SchemedArgumentParser(BaseSchemedArgumentParser):
             short_aliases: dict[str, str] | None = None,
             **kwargs
     ):
-
         super(SchemedArgumentParser, self).__init__(**kwargs)
         self._schema = schema
         self._ignore_fields = ignore_fields or set()
@@ -39,88 +38,64 @@ class SchemedArgumentParser(BaseSchemedArgumentParser):
             self._add_arguments_from_schema()
 
     @staticmethod
-    def _is_enum_field(field_type: type):
-        return inspect.isclass(field_type) and issubclass(field_type, Enum)
+    def _is_enum(enum) -> bool:
+        return inspect.isclass(enum) and issubclass(enum, Enum)
 
     @staticmethod
-    def _convert_enum_value(value: str, enum: type[Enum]):
-        if issubclass(enum, int):
-            return enum(int(value))
-        return enum(value)
+    def _build_argument_action(call: Callable):
+        return type(
+            'action',
+            (argparse.Action,),
+            {'__call__': call}
+        )
 
-    def _convert_value(
-            self,
-            value: str,
-            field_info
-    ):
+    def _is_positional_argument(self, name: str):
+        return name in self._positional_arguments
 
+
+    def _get_argument_type(self, field_info):
         field_type = field_info.annotation
 
-        if self._is_enum_field(field_type):
-            return self._convert_enum_value(value, enum=field_type)
+        if not self._is_enum(enum=field_type):
+            return field_type
 
-        if field_info.metadata:
-            for validator in field_info.metadata:
-                try:
-                    validator.func(value)
-                except (ValueError, AssertionError):
-                    raise ValueError()
-
-        return value
-
-    def _get_value_converter(self, field_info):
-        def argument(value: str):
-            return self._convert_value(value, field_info)
-
-        return argument
-
-    def _add_field_argument(
-            self,
-            name: str,
-            info
-    ):
-        field_type: type = info.annotation
+    def _add_field_argument(self, field_name: str, field_info):
+        actual_name = field_info.alias or field_name
+        short_name = self._short_aliases.get(
+            field_name,
+            self._short_aliases.get(actual_name, actual_name)
+        ).removeprefix('-').removeprefix('--')[0]
 
         args = []
         kwargs = {
-            'default': info.default,
-            'help': info.description,
-            'type': self._get_value_converter(info),
+            'default': field_info.default,
+            'help': field_info.description,
         }
-        if name not in self._positional_arguments:
-            alias = self._short_aliases.get(
-                name,
-                info.serialization_alias or name
-            )
-            alias = alias.removeprefix('-')
 
-            args.extend((f'-{alias[0]}', f'--{name}',))
-        else:
-            args.append(name)
-
-            if not info.is_required():
+        if self._is_positional_argument(name=actual_name):
+            if not field_info.is_required():
                 kwargs.update({'nargs': '?'})
 
-        if self._is_enum_field(field_type):
-            kwargs.update({
-                'choices': list(map(lambda c: c.value, field_type))
-            })
+            args.append(actual_name)
+        else:
+            args.extend((f'-{short_name}', f'--{actual_name}'))
 
         self.add_argument(
             *args,
-            **kwargs,
+            **kwargs
         )
 
     def _add_arguments_from_schema(self):
         fields = self._schema.model_fields
 
         for name, info in fields.items():
-            name = info.alias or name
-            if name not in self._ignore_fields:
-                self._add_field_argument(
-                    name=name,
-                    info=info
-                )
+            if name in self._ignore_fields:
+                continue
+
+            self._add_field_argument(
+                field_name=name,
+                field_info=info
+            )
 
     @typechecked
     def parse_schemed_args(

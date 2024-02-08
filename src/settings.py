@@ -16,6 +16,7 @@ if FOR_BUILD:
 # App info
 APP = 'PC-Alarm'
 VERSION = '0.0.2'
+DESCRIPTION = 'PC-Alarm is a tool for remote access to your computer, with alarm function.'
 
 # Configurator
 WINDOW_SIZE = (600, 400)
