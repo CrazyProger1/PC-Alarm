@@ -32,3 +32,4 @@ ADMIN_GROUP = 'admin'
 
 # Logging
 LOGGING_LEVEL = logging.DEBUG
+LOGGING_FORMAT = '%(log_color)s%(levelname)s: %(name)s: %(message)s'

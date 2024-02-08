@@ -3,7 +3,8 @@ import logging
 from src.settings import (
     APP,
     DEBUG,
-    LOGGING_LEVEL
+    LOGGING_LEVEL,
+    LOGGING_FORMAT
 )
 
 logger = logging.getLogger(APP)
@@ -14,7 +15,7 @@ if DEBUG:
         import colorlog
 
         formatter = colorlog.ColoredFormatter(
-            '%(log_color)s%(levelname)s:%(name)s:%(message)s',
+            LOGGING_FORMAT,
             log_colors={
                 'DEBUG': 'cyan',
                 'INFO': 'green',

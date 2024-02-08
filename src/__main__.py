@@ -18,6 +18,7 @@ from src.core.schemas import (
 from src.core.enums import (
     ApplicationWorkingMode
 )
+from src.core.logging import logger
 from src.utils.argutils import (
     BaseSchemedArgumentParser,
     SchemedArgumentParser
@@ -48,12 +49,16 @@ def save_settings(file: str, settings: BaseModel):
 
 
 async def main():
+    logger.info(f'{APP} launched')
     args = parse_arguments(SchemedArgumentParser(
         schema=Arguments,
         prog=APP,
         description=DESCRIPTION
     ))
+    logger.info(f'Arguments parsed: {args}')
     settings = load_settings(file=args.settings_file, schema=Settings)
+
+    logger.info('Settings loaded')
 
     match args.mode:
         case ApplicationWorkingMode.BOT:
@@ -68,6 +73,7 @@ async def main():
             )
 
     save_settings(file=args.settings_file, settings=settings)
+    logger.info(f'{APP} terminated')
 
 
 if __name__ == '__main__':
