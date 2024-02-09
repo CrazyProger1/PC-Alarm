@@ -11,12 +11,14 @@ from ..clsutils import iter_subclasses
 
 
 class LoaderFactory(BaseLoaderFactory):
+    @classmethod
     @typechecked
-    def create(self, file: str) -> BaseLoader:
+    def create(cls, file: str) -> BaseLoader:
         if not os.path.isfile(file):
             raise FileNotFoundError(f'File not found: {file}')
 
-        filext = os.path.splitext(file)[1]
+        filext = os.path.splitext(file)[1] or os.path.splitext(file)[0]
+
         for loader_class in iter_subclasses(BaseLoader):
             if filext in loader_class.filetypes:
                 return loader_class()

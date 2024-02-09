@@ -8,8 +8,8 @@ class SettingsError(Exception):
 class LoaderNotFoundError(SettingsError):
     def __init__(self, file: str):
         self.file = file
-        self.filetype = os.path.splitext(file)[1]
-        super().__init__(f'Loader for {self.filetype} not found')
+
+        super().__init__(f'Loader for {self.file} not found')
 
 
 class FileFormatError(SettingsError):

@@ -16,9 +16,9 @@ class DatabaseSettings(BaseModel):
     file: str = Field(DEFAULT_DATABASE_FILE)
 
 
-class SensitiveSettings(BaseModel):
-    bot_token: str
-    admin_id: int
+class ENVSettings(BaseModel):
+    bot_token: str = Field(alias='BOT_TOKEN')
+    admin_id: int = Field(alias='ADMIN_ID')
 
 
 class BotSettings(BaseModel):
@@ -33,4 +33,4 @@ class Settings(BaseModel):
     database: DatabaseSettings = DatabaseSettings()
     bot: BotSettings = BotSettings()
     configurator: ConfiguratorSettings = ConfiguratorSettings()
-    credentials: SensitiveSettings | None = None
+    env: ENVSettings | None = None

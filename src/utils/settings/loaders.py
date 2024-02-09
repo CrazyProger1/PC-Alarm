@@ -49,4 +49,4 @@ class ENVLoader(BaseLoader):
         data: dict = instance.model_dump(**kwargs)
 
         for name, value in data.items():
-            dotenv.set_key(file, name, value)
+            dotenv.set_key(file, name, str(value))

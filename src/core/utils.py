@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from pydantic import BaseModel
 
 from src.utils.arguments import (
@@ -6,9 +8,6 @@ from src.utils.arguments import (
 from src.utils.settings import (
     load,
     save
-)
-from src.utils.settings.exceptions import (
-    SettingsError
 )
 from src.core.logging import logger
 
@@ -20,9 +19,28 @@ def parse_arguments(parser: BaseSchemedArgumentParser) -> BaseModel:
 
 
 def load_settings(file: str, schema: type[BaseModel]) -> BaseModel:
-    logger.info(f'Settings loaded')
+    try:
+        settings = load(
+            file=file,
+            schema=schema
+        )
+    except Exception as e:
+        logger.critical(f'Error occurred while loading settings: {e}')
+        raise
+
+    logger.fatal(f'Settings loaded: {file}')
+    return settings
 
 
-def save_settings(file: str, instance: BaseModel):
-    logger.info(f'Settings saved')
-
+def save_settings(file: str, instance: BaseModel, exclude: Iterable[str] = None):
+    try:
+        save(
+            file=file,
+            instance=instance,
+            exclude=exclude,
+            by_alias=True
+        )
+    except Exception as e:
+        logger.critical(f'Error occurred while saving settings: {e}')
+        raise
+    logger.info(f'Settings saved: {file}')
