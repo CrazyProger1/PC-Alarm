@@ -7,7 +7,7 @@ from .utils import (
 )
 from .loaders import (
     TOMLLoader,
-    JSONLoader
+    ENVLoader
 )
 
 __all__ = [
@@ -15,5 +15,5 @@ __all__ = [
     'BaseLoader',
     'BaseLoaderFactory',
     'TOMLLoader',
-    'JSONLoader'
+    'ENVLoader',
 ]

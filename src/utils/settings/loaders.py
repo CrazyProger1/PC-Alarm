@@ -1,8 +1,7 @@
 import os.path
-from typing import Iterable
 
 import toml
-import json
+import dotenv
 from pydantic import BaseModel
 from typeguard import typechecked
 
@@ -19,39 +18,17 @@ class TOMLLoader(BaseLoader):
 
     @typechecked
     def load(self, file: str, schema: type[BaseModel], **kwargs) -> BaseModel:
-        if not os.path.isfile(file):
-            raise FileNotFoundError(f'File not found: {file}')
-
         try:
-            raw: dict = toml.load(file)
-            return schema.model_validate(raw, **kwargs)
+            data: dict = toml.load(file)
+            return schema.model_validate(data, **kwargs)
         except toml.TomlDecodeError as e:
             raise FileFormatError(file=file, msg=str(e))
 
     @typechecked
-    def save(self, file: str, data: BaseModel, ignore_fields: Iterable[str] | None = None, **kwargs) -> None:
-        if not ignore_fields:
-            ignore_fields = set()
-
+    def save(self, file: str, instance: BaseModel, **kwargs) -> None:
         with open(file, 'w', encoding='utf-8') as f:
-            raw: dict = data.model_dump()
-            for field in ignore_fields:
-                raw.pop(field)
-            toml.dump(raw, f)
-
-
-class JSONLoader(BaseLoader):
-    filetypes = {
-        '.json',
-    }
-
-    @typechecked
-    def load(self, file: str, schema: type[BaseModel], **kwargs) -> BaseModel:
-        pass
-
-    @typechecked
-    def save(self, file: str, data: BaseModel, ignore_fields: Iterable[str], **kwargs) -> None:
-        pass
+            data: dict = instance.model_dump(**kwargs)
+            toml.dump(data, f)
 
 
 class ENVLoader(BaseLoader):
@@ -59,8 +36,17 @@ class ENVLoader(BaseLoader):
         '.env',
     }
 
+    @typechecked
     def load(self, file: str, schema: type[BaseModel], **kwargs) -> BaseModel:
-        pass
+        if not os.path.isfile(file):
+            raise FileNotFoundError(f'File not found: {file}')
 
-    def save(self, file: str, data: BaseModel, ignore_fields: Iterable[str], **kwargs) -> None:
-        pass
+        data = dotenv.dotenv_values(file)
+        return schema.model_validate(data, **kwargs)
+
+    @typechecked
+    def save(self, file: str, instance: BaseModel, **kwargs) -> None:
+        data: dict = instance.model_dump(**kwargs)
+
+        for name, value in data.items():
+            dotenv.set_key(file, name, value)
