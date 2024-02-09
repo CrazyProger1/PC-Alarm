@@ -1,7 +1,5 @@
-async def run_bot(arguments, settings):
-    pass
-
+from .app import Bot
 
 __all__ = [
-    'run_bot'
+    'Bot'
 ]

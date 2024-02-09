@@ -28,7 +28,7 @@ def load_settings(file: str, schema: type[BaseModel]) -> BaseModel:
         logger.critical(f'Error occurred while loading settings: {e}')
         raise
 
-    logger.fatal(f'Settings loaded: {file}')
+    logger.info(f'Settings loaded: {file}')
     return settings
 
 
@@ -44,3 +44,4 @@ def save_settings(file: str, instance: BaseModel, exclude: Iterable[str] = None)
         logger.critical(f'Error occurred while saving settings: {e}')
         raise
     logger.info(f'Settings saved: {file}')
+
