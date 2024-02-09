@@ -1,104 +1,60 @@
 import asyncio
-import os
-from typing import Iterable
-
-import toml
-from pydantic import BaseModel
-from typeguard import typechecked
 
 from src.settings import (
-    DEFAULT_SETTINGS_FILE,
     APP,
-    DESCRIPTION,
-    ENV_FILE
+    DESCRIPTION
 )
-from src.configurator import run_configurator
-from src.bot import run_bot
+from src.utils.arguments import SchemedArgumentParser
+from src.core.logging import logger
+from src.core.utils import (
+    load_settings,
+    save_settings,
+    parse_arguments
+)
 from src.core.schemas import (
     Settings,
-    Arguments,
-    SensitiveSettings
+    Arguments
 )
 from src.core.enums import (
     ApplicationWorkingMode
 )
-from src.core.logging import logger
-from src.utils.arguments import (
-    BaseSchemedArgumentParser,
-    SchemedArgumentParser
-)
-
-
-@typechecked
-def parse_arguments(parser: BaseSchemedArgumentParser) -> BaseModel:
-    return parser.parse_schemed_args()
-
-
-@typechecked
-def load_settings(file: str, schema: type[BaseModel]) -> BaseModel:
-    try:
-        data = toml.load(file)
-    except Exception as e:
-        return schema()
-    return schema.model_validate(data)
-
-
-@typechecked
-def save_settings(file: str, settings: BaseModel, ignore_fields: Iterable = ()):
-    try:
-        with open(file, 'w', encoding='utf-8') as f:
-            data: dict = settings.model_dump()
-            for field in ignore_fields:
-                data.pop(field)
-            toml.dump(data, f)
-    except Exception as e:
-        save_settings(DEFAULT_SETTINGS_FILE, settings)
-
-
-@typechecked
-def save_dotenv(settings: BaseModel, file: str = ENV_FILE):
-    try:
-        data = {}
-
-        for name, info in settings.model_fields.items():
-            value = getattr(settings, name, )
-            env = info.json_schema_extra.get('env')
-            data.update({env: value})
-        # with open(file, 'w', encoding='utf-8') as f:
-        #     pass
-    except Exception as e:
-        pass
+from src.configurator import run_configurator
+from src.bot import run_bot
 
 
 async def main():
     logger.info(f'{APP} launched')
-    args = parse_arguments(SchemedArgumentParser(
-        schema=Arguments,
-        prog=APP,
-        description=DESCRIPTION
-    ))
-    logger.info(f'Arguments parsed: {args}')
-    settings = load_settings(file=args.settings_file, schema=Settings)
 
-    logger.info('Settings loaded')
+    arguments = parse_arguments(
+        parser=SchemedArgumentParser(
+            schema=Arguments,
+            prog=APP,
+            description=DESCRIPTION
+        )
+    )
 
-    match args.mode:
+    settings = load_settings(
+        file=arguments.settings_file,
+        schema=Settings
+    )
+
+    match arguments.mode:
         case ApplicationWorkingMode.BOT:
             await run_bot(
-                arguments=args,
+                arguments=arguments,
                 settings=settings
             )
         case ApplicationWorkingMode.CONFIGURATOR:
             await run_configurator(
-                arguments=args,
+                arguments=arguments,
                 settings=settings
             )
 
     save_settings(
-        file=args.settings_file,
-        settings=settings,
-        ignore_fields=('credentials',)
+        file=arguments.settings_file,
+        instance=settings
     )
+
     logger.info(f'{APP} terminated')
 
 

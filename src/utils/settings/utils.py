@@ -14,3 +14,14 @@ def load(file: str, schema: type[BaseModel], loader: BaseLoader = None) -> BaseM
         file=file,
         schema=schema
     )
+
+
+@typechecked
+def save(file: str, instance: BaseModel, loader: BaseLoader = None) -> None:
+    if not loader:
+        loader = LoaderFactory.create(file=file)
+
+    return loader.save(
+        file=file,
+        instance=instance
+    )

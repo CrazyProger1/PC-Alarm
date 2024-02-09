@@ -3,7 +3,8 @@ from .types import (
     BaseLoaderFactory
 )
 from .utils import (
-    load
+    load,
+    save
 )
 from .loaders import (
     TOMLLoader,
@@ -12,6 +13,7 @@ from .loaders import (
 
 __all__ = [
     'load',
+    'save',
     'BaseLoader',
     'BaseLoaderFactory',
     'TOMLLoader',
