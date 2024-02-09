@@ -1,8 +1,6 @@
 import logging
 
-from dotenv import load_dotenv
-
-load_dotenv()
+ENV_FILE = '.env'
 
 # System
 DEBUG = True

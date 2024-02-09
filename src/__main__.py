@@ -1,4 +1,5 @@
 import asyncio
+import os
 from typing import Iterable
 
 import toml
@@ -8,19 +9,21 @@ from typeguard import typechecked
 from src.settings import (
     DEFAULT_SETTINGS_FILE,
     APP,
-    DESCRIPTION
+    DESCRIPTION,
+    ENV_FILE
 )
 from src.configurator import run_configurator
 from src.bot import run_bot
 from src.core.schemas import (
     Settings,
-    Arguments
+    Arguments,
+    SensitiveSettings
 )
 from src.core.enums import (
     ApplicationWorkingMode
 )
 from src.core.logging import logger
-from src.utils.argutils import (
+from src.utils.arguments import (
     BaseSchemedArgumentParser,
     SchemedArgumentParser
 )
@@ -50,6 +53,21 @@ def save_settings(file: str, settings: BaseModel, ignore_fields: Iterable = ()):
             toml.dump(data, f)
     except Exception as e:
         save_settings(DEFAULT_SETTINGS_FILE, settings)
+
+
+@typechecked
+def save_dotenv(settings: BaseModel, file: str = ENV_FILE):
+    try:
+        data = {}
+
+        for name, info in settings.model_fields.items():
+            value = getattr(settings, name, )
+            env = info.json_schema_extra.get('env')
+            data.update({env: value})
+        # with open(file, 'w', encoding='utf-8') as f:
+        #     pass
+    except Exception as e:
+        pass
 
 
 async def main():

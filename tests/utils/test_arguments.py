@@ -7,7 +7,7 @@ from pydantic import (
     ValidationError
 )
 
-from src.utils.argutils import SchemedArgumentParser
+from src.utils.arguments import SchemedArgumentParser
 from src.core.schemas import (
     Arguments
 )

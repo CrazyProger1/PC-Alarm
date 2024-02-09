@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from pydantic_settings import BaseSettings
 
 from src.settings import (
     DEFAULT_SETTINGS_FILE,
@@ -13,25 +12,25 @@ class Arguments(BaseModel):
     settings_file: str = Field(DEFAULT_SETTINGS_FILE, description='settings file path', alias='settings')
 
 
-class DatabaseSettings(BaseSettings):
+class DatabaseSettings(BaseModel):
     file: str = Field(DEFAULT_DATABASE_FILE)
 
 
-class SensitiveSettings(BaseSettings):
-    bot_token: str = Field(env='BOT_TOKEN')
-    admin_id: int = Field(env='ADMIN_ID')
+class SensitiveSettings(BaseModel):
+    bot_token: str
+    admin_id: int
 
 
-class BotSettings(BaseSettings):
+class BotSettings(BaseModel):
     pass
 
 
-class ConfiguratorSettings(BaseSettings):
+class ConfiguratorSettings(BaseModel):
     language: str = 'en'
 
 
-class Settings(BaseSettings):
+class Settings(BaseModel):
     database: DatabaseSettings = DatabaseSettings()
     bot: BotSettings = BotSettings()
     configurator: ConfiguratorSettings = ConfiguratorSettings()
-    credentials: SensitiveSettings = SensitiveSettings()
+    credentials: SensitiveSettings | None = None

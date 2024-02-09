@@ -1,20 +1,13 @@
 import argparse
 import inspect
-from abc import ABC, abstractmethod
-from typing import Container, Sequence, Callable
+
+from typing import Container, Sequence
 from enum import Enum
 
 from pydantic import BaseModel
 from typeguard import typechecked
 
-
-class BaseSchemedArgumentParser(argparse.ArgumentParser, ABC):
-    @abstractmethod
-    def parse_schemed_args(
-            self,
-            args: Sequence[str] | None = None,
-            namespace: argparse.Namespace | None = None
-    ) -> BaseModel: ...
+from .types import BaseSchemedArgumentParser
 
 
 class SchemedArgumentParser(BaseSchemedArgumentParser):
