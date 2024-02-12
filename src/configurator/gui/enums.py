@@ -1,4 +1,4 @@
-from src.utils.i18n import TranslatableEnum
+from i18n import TranslatableEnum
 
 
 class ConfiguratorMessages(TranslatableEnum):
