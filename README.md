@@ -121,13 +121,13 @@ Now, you can find an executable file at [dist/main](dist/main).
 
 ### Translation-Guide
 
-Firstly, you need to go to folder: [resources/languages/pot](resources/i18n/pot). There you will
+Firstly, you need to go to folder: [resources/languages/pot](resources/languages/pot). There you will
 find [.pot](https://en.wikipedia.org/wiki/Gettext) files.
 
 Each part of the application has its own [.pot](https://en.wikipedia.org/wiki/Gettext) template:
 
-- Configurator - [configurator.pot](resources/i18n/pot/configurator.pot)
-- Bot - [bot.pot](resources/i18n/pot/bot.pot)
+- Configurator - [configurator.pot](resources/languages/pot/configurator.pot)
+- Bot - [bot.pot](resources/languages/pot/bot.pot)
 
 [.pot](https://en.wikipedia.org/wiki/Gettext) template files can be open with applications such as
 [Poedit](https://poedit.net/), [Localizely](https://localizely.com/), [Transifex](https://www.transifex.com/) and many

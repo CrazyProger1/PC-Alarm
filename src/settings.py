@@ -31,3 +31,6 @@ ADMIN_GROUP = 'admin'
 # Logging
 LOGGING_LEVEL = logging.DEBUG
 LOGGING_FORMAT = '%(log_color)s%(levelname)s: %(name)s: %(message)s'
+
+# i18n
+LOCALE_FOLDER = './resources/languages/'
