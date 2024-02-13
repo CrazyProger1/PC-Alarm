@@ -44,4 +44,3 @@ def save_settings(file: str, instance: BaseModel, exclude: Iterable[str] = None)
         logger.critical(f'Error occurred while saving settings: {e}')
         raise
     logger.info(f'Settings saved: {file}')
-

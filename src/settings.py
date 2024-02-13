@@ -33,4 +33,5 @@ LOGGING_LEVEL = logging.DEBUG
 LOGGING_FORMAT = '%(log_color)s%(levelname)s: %(name)s: %(message)s'
 
 # i18n
-LOCALE_FOLDER = './resources/languages/'
+LOCALE_DIR = './resources/languages/'
+DOMAIN = 'app'

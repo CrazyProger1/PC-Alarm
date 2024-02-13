@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/CrazyProger1/PC-Alarm/blob/dev/resources/icons/alarm.png" alt="Alarm logo" width="256" height="256"/>
+  <img src="https://github.com/CrazyProger1/PC-Alarm/blob/dev/resources/images/icons/alarm.png" alt="Alarm logo" width="256" height="256"/>
 </p>
 
 # PC-Alarm
@@ -33,15 +33,15 @@ protected 24/7. Download PC-Alarm now and take control of your computer's securi
 
 ## Overview
 
-![](resources/imgs/configurator.png)
+![](resources/images/configurator.png)
 
 _Configurator window._
 
-![](resources/imgs/menu_1.png)
+![](resources/images/menu_1.png)
 
 _Main bot menu._
 
-![](resources/imgs/menu_2.png)
+![](resources/images/menu_2.png)
 
 _Some additional useful actions menu._
 
@@ -54,7 +54,7 @@ To install the program, run the downloaded installer and follow the instructions
 
 After installation, you will see 2 shortcuts on your desktop:
 
-![](resources/imgs/shortcuts.png)
+![](resources/images/shortcuts.png)
 
 The first one (_PC-Alarm-Configurator.exe_) launches the configurator, the second - the whole program.
 

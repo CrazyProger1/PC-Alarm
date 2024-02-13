@@ -1,7 +1,9 @@
 from src.settings import (
     APP,
     DESCRIPTION,
-    ENV_FILE
+    ENV_FILE,
+    LOCALE_DIR,
+    DOMAIN
 )
 from src.utils.arguments import SchemedArgumentParser
 from src.core.utils import (
@@ -18,9 +20,15 @@ from src.core.schemas import (
 from src.types import (
     BaseApplicationFactory
 )
+from i18n import set_domain
 
 
 async def run(factory: type[BaseApplicationFactory]):
+    set_domain(
+        domain=DOMAIN,
+        localedir=LOCALE_DIR
+    )
+
     arguments = parse_arguments(
         parser=SchemedArgumentParser(
             schema=Arguments,

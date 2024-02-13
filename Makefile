@@ -9,7 +9,7 @@ run-configurator:
 
 .PHONY: extract-translations
 extract-translations:
-	poetry run python -m src.utils.i18n "src/__main__.py" "resources/i18n/PC-Alarm.po"
+	poetry run python -m i18n src "resources/languages/PC-Alarm.pot"
 
 
 .PHONY: test
@@ -20,7 +20,7 @@ test:
 
 .PHONY: build
 build:
-	poetry run pyinstaller -F -w --name PC-Alarm --icon "resources/imgs/icons/base.ico" --add-data="resources;." src/__main__.py
+	poetry run pyinstaller -F -w --name PC-Alarm --icon "resources/images/icons/base.ico" --add-data="resources;." src/__main__.py
 
 
 .PHONY: build-debug

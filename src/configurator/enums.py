@@ -8,7 +8,9 @@ class ConfiguratorMessage(TranslatableEnum):
     TELEGRAM_USERID = 'Telegram Admin-User ID'
     LANGUAGE = 'Language'
     SAVE = 'Save'
+    LANGUAGE_NAME = 'Language Name'
 
 
-class PubSubMessage(Enum):
+class PubSubEvent(Enum):
     LANGUAGE_CHANGED = 'language_changed'
+    SAVE = 'save'

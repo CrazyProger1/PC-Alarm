@@ -1,30 +1,44 @@
+import asyncio
+
 import flet as ft
 
+from i18n import set_language
+
+from src.core.languages import (
+    get_available_languages
+)
+from src.utils.events import (
+    EventChannel
+)
 from .enums import (
     ConfiguratorMessage,
-    PubSubMessage
+    PubSubEvent
 )
 
 
 class CustomControl(ft.UserControl):
+    events = EventChannel()
+
     def __init__(self, arguments, settings):
         super().__init__()
 
         self._arguments = arguments
         self._settings = settings
+
+        self.events.subscribe(self.translate, PubSubEvent.LANGUAGE_CHANGED)
+        self.events.subscribe(self.update_sync_to_async, PubSubEvent.LANGUAGE_CHANGED)
+        self.events.subscribe(self.save, PubSubEvent.SAVE)
+
         self.translate()
 
-    async def _on_message(self, message: str):
-        match message:
-            case PubSubMessage.LANGUAGE_CHANGED:
-                self.translate()
-                await self.update_async()
+    def update_sync_to_async(self):
+        asyncio.create_task(self.update_async())
 
     def translate(self):
         pass
 
-    async def did_mount_async(self):
-        await self.page.pubsub.subscribe_async(self._on_message)
+    def save(self):
+        pass
 
 
 class TokenBox(CustomControl):
@@ -50,7 +64,7 @@ class TokenBox(CustomControl):
         super().__init__(*args, **kwargs)
 
     def translate(self):
-        self._telegram_token_text.value = ConfiguratorMessage.TELEGRAM_TOKEN
+        self._telegram_token_text.value = str(ConfiguratorMessage.TELEGRAM_TOKEN)
 
     def build(self):
         return self._content
@@ -77,7 +91,7 @@ class TelegramIDBox(CustomControl):
         super().__init__(*args, **kwargs)
 
     def translate(self):
-        self._telegram_id_text.value = ConfiguratorMessage.TELEGRAM_USERID
+        self._telegram_id_text.value = str(ConfiguratorMessage.TELEGRAM_USERID)
 
     def build(self):
         return self._content
@@ -101,18 +115,28 @@ class LanguageBox(CustomControl):
                 )
             ]
         )
+
+        self._languages = {}
+        self._load_languages()
+
         super().__init__(*args, **kwargs)
 
+    def _load_languages(self):
+        for language in get_available_languages():
+            self._languages[ConfiguratorMessage.LANGUAGE_NAME.language(language)] = language
+
+        self._language_dropdown.options = [
+            ft.dropdown.Option(option) for option in self._languages.keys()
+        ]
+
     async def _handle_changed(self, event: ft.ControlEvent):
-        await self.page.pubsub.send_all_async(PubSubMessage.LANGUAGE_CHANGED)
+        language = self._languages.get(event.data)
+        set_language(language)
+        self.events.publish(PubSubEvent.LANGUAGE_CHANGED)
 
     def translate(self):
-        self._language_dropdown.options = [
-            ft.dropdown.Option('English'),
-            ft.dropdown.Option('Ukrainian'),
-            ft.dropdown.Option('Somalian'),
-        ]
-        self._language_text.value = ConfiguratorMessage.LANGUAGE
+        self._language_text.value = str(ConfiguratorMessage.LANGUAGE)
+        asyncio.create_task(self._language_text.update_async())
 
     def build(self):
         return self._content
@@ -124,6 +148,7 @@ class ActionPanel(CustomControl):
         self._button_save = ft.TextButton(
             expand=True,
             height=50,
+            on_click=self._handle_save
         )
         self._content = ft.Row(
             expand=True,
@@ -133,8 +158,11 @@ class ActionPanel(CustomControl):
         )
         super().__init__(*args, **kwargs)
 
+    def _handle_save(self, event):
+        self.events.publish(PubSubEvent.SAVE)
+
     def translate(self):
-        self._button_save.text = ConfiguratorMessage.SAVE
+        self._button_save.text = str(ConfiguratorMessage.SAVE)
 
     def build(self):
         return self._content
