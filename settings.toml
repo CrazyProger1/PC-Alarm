@@ -4,4 +4,4 @@ file = "db.sqlite3"
 [bot]
 
 [configurator]
-language = "en"
+language = "uk"

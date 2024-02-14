@@ -65,6 +65,11 @@ class TokenBox(CustomControl):
 
     def translate(self):
         self._telegram_token_text.value = str(ConfiguratorMessage.TELEGRAM_TOKEN)
+        self._telegram_token_field.value = self._settings.env.bot_token
+
+    def save(self):
+        token = self._telegram_token_field.value
+        self._settings.env.bot_token = token
 
     def build(self):
         return self._content
@@ -92,6 +97,10 @@ class TelegramIDBox(CustomControl):
 
     def translate(self):
         self._telegram_id_text.value = str(ConfiguratorMessage.TELEGRAM_USERID)
+        self._telegram_id_field.value = self._settings.env.admin_id
+
+    def save(self):
+        self._settings.env.admin_id = int(self._telegram_id_field.value)
 
     def build(self):
         return self._content
@@ -137,6 +146,10 @@ class LanguageBox(CustomControl):
     def translate(self):
         self._language_text.value = str(ConfiguratorMessage.LANGUAGE)
         asyncio.create_task(self._language_text.update_async())
+
+    def save(self):
+        language = self._languages.get(self._language_dropdown.value, 'en')
+        self._settings.configurator.language = language
 
     def build(self):
         return self._content
